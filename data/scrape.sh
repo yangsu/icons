@@ -18,12 +18,12 @@ function linkToJson() {
 function scrape() {
   # NOTE:16 is found manually
   END=1
-  echo "{"
+  echo "["
   for (( i = 1; i <= $END; i++ )); do
     # echo Downloading Page $i/$END
     linkToJson "http://iicns.com/?page=$i"
   done
-  echo "}"
+  echo "]"
 }
 
 function download() {

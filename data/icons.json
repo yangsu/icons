@@ -1,4 +1,4 @@
-{
+[
 {"name": "1Password for iPhone","link":"http://itunes.apple.com/us/app/1password-for-iphone/id285897618?mt=8","image":"https://iicns.s3.amazonaws.com/uploads/icon/icon/689/s256_mzl.jfbaflyu.tif"},
 {"name": "20 Minute Meals - Jamie Oliver","link":"http://itunes.apple.com/us/app/20-minute-meals-jamie-oliver/id318926433","image":"https://iicns.s3.amazonaws.com/uploads/icon/icon/552/s256_mzm.ecvekqvq.jpeg"},
 {"name": "2Do: Tasks Done in Style","link":"http://itunes.apple.com/app/2do-tasks-done-in-style/id303656546?mt=8","image":"https://iicns.s3.amazonaws.com/uploads/icon/icon/427/s256_mzl.seqisyrm.jpeg"},
@@ -623,5 +623,5 @@
 {"name": "Zombie Highway","link":"http://itunes.apple.com/us/app/zombie-highway/id376412160?mt=8","image":"https://iicns.s3.amazonaws.com/uploads/icon/icon/647/s256_mza_7760366670073196567.png"},
 {"name": "Zuma's Revenge!","link":"http://itunes.apple.com/us/app/zumas-revenge!/id501499260?mt=8","image":"https://iicns.s3.amazonaws.com/uploads/icon/icon/655/s256_mzm.fnwvnfvp.jpg"},
 {"name": "На тарелочке - доставка еды в городах России","link":"http://itunes.apple.com/ru/app/na-tarelocke-dostavka-edy/id515222950?mt=8","image":"https://iicns.s3.amazonaws.com/uploads/icon/icon/884/s256_mza_3902344556668891737.png"},
-{"name": "▻Sudoku","link":"http://itunes.apple.com/us/app/sudoku/id366247306?mt=8","image":"https://iicns.s3.amazonaws.com/uploads/icon/icon/643/s256_mzl.radwshcj.png"},
-}
+{"name": "▻Sudoku","link":"http://itunes.apple.com/us/app/sudoku/id366247306?mt=8","image":"https://iicns.s3.amazonaws.com/uploads/icon/icon/643/s256_mzl.radwshcj.png"}
+]
