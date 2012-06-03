@@ -1,0 +1,15 @@
+          <ul id="icons" class="icons-list">
+    <li class="loading">
+  <a href="http://itunes.apple.com/app/beachweather/id440415215?mt=8&amp;ls=1" target="_blank"><img alt="BeachWeather" class="icon" src="https://iicns.s3.amazonaws.com/uploads/icon/icon/530/s256_mzl.yhnqkrqv.png" /></a>
+  <span class="mask"></span>
+</li><li class="loading">
+  <a href="http://itunes.apple.com/us/app/thermo/id414215658?mt=8" target="_blank"><img alt="Thermo" class="icon" src="https://iicns.s3.amazonaws.com/uploads/icon/icon/359/s256_mzl.vjtdfofx.png" /></a>
+  <span class="mask"></span>
+</li><li class="loading">
+  <a href="http://itunes.apple.com/us/app/weather-hd/id364193735?mt=8" target="_blank"><img alt="Weather HD" class="icon" src="https://iicns.s3.amazonaws.com/uploads/icon/icon/727/s256_mzl.etnwwjmu.jpg" /></a>
+  <span class="mask"></span>
+</li><li class="loading">
+  <a href="http://itunes.apple.com/us/app/thermometer+/id494877276?mt=8" target="_blank"><img alt="Thermometer+" class="icon" src="https://iicns.s3.amazonaws.com/uploads/icon/icon/726/s256_mza_3709324116760899203.png" /></a>
+  <span class="mask"></span>
+</li>
+  </ul>
