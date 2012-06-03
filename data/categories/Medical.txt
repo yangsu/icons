@@ -1,9 +1,0 @@
-          <ul id="icons" class="icons-list">
-    <li class="loading">
-  <a href="http://itunes.apple.com/us/app/pillboxie/id417367089?mt=8" target="_blank"><img alt="Pillboxie" class="icon" src="https://iicns.s3.amazonaws.com/uploads/icon/icon/386/s256_mzl.atpxands.jpg" /></a>
-  <span class="mask"></span>
-</li><li class="loading">
-  <a href="http://itunes.apple.com/us/app/eye-test-+/id522108914?mt=8" target="_blank"><img alt="Eye Test +" class="icon" src="https://iicns.s3.amazonaws.com/uploads/icon/icon/666/s256_rwDeOzsbqgib1JZytyTM2g-temp-upload.nufvoweg.png" /></a>
-  <span class="mask"></span>
-</li>
-  </ul>

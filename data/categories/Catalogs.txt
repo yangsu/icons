@@ -1,9 +1,0 @@
-          <ul id="icons" class="icons-list">
-    <li class="loading">
-  <a href="http://itunes.apple.com/us/app/games-store/id510800707?mt=8" target="_blank"><img alt="Games Store" class="icon" src="https://iicns.s3.amazonaws.com/uploads/icon/icon/602/s256_mza_8338550042085884570.png" /></a>
-  <span class="mask"></span>
-</li><li class="loading">
-  <a href="http://itunes.apple.com/us/app/5x-speed-downloader/id505917339?mt=8" target="_blank"><img alt="5x Speed Downloader" class="icon" src="https://iicns.s3.amazonaws.com/uploads/icon/icon/587/s256_mzm.lquylxrt.png" /></a>
-  <span class="mask"></span>
-</li>
-  </ul>
