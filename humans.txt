@@ -3,13 +3,13 @@
 
 
 /* TEAM */
-  <your title>: <your name>
-  Site:
-  Twitter:
+  Author: Yang Su
+  Site: http://yangsu.info/
+  Twitter: @ys65
   Location:
 
 /* THANKS */
-  Names (& URL):
+  Names (& URL): Jackie Tran & Jan Sedivy & http://iicns.com/
 
 /* SITE */
   Standards: HTML5, CSS3
