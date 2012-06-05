@@ -1,0 +1,14 @@
+{
+	"folders":
+	[
+		{
+			"path": "/Users/yang/Code/icons"
+		}
+	],
+    "settings":
+    {
+        "tab_size": 4,
+        "translate_tabs_to_spaces": true,
+        "jslint_options": "--debug --node --indent 4 --nomen --sloppy --predef THREE,_,$,chrome --browser"
+    }
+}
