@@ -198,27 +198,27 @@ var allLoaded = function () {
       gray : Util.gray(sum)
     }
   });
-  $('#state').html('Ready');
+  state.html('Ready');
 }
-var sortFunc = function(a, b) {
-  var aa = +$(a).attr('id').replace('#', ''),
-      bb = +$(b).attr('id').replace('#', '');
-   return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
-};
+var sortFunc = (function () {
+  var toggleState = false;
+    compareFunc = function(a, b) {
+      var aa = +$(a).attr('id').replace('#', ''),
+	  bb = +$(b).attr('id').replace('#', '');
+       return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
+    };
+  return function (evt) {
+    var list = $('#list'),
+      listitems = list.children('li').get();
+    listitems.sort(compareFunc);
+    if (toggleState) listitems.reverse();
+    $.each(listitems, function(idx, itm) { list.append(itm); });
+    evt.target.innerHTML = (toggleState) ? 'Sort' : 'RSort';
+    toggleState = !toggleState;
+  };
+})();
 
-$('#sort').click(function () {
-  var list = $('#list'),
-    listitems = list.children('li').get();
-  listitems.sort(sortFunc);
-  $.each(listitems, function(idx, itm) { list.append(itm); });
-});
-$('#rsort').click(function () {
-  var list = $('#list'),
-    listitems = list.children('li').get();
-  listitems.sort(sortFunc);
-  listitems.reverse();
-  $.each(listitems, function(idx, itm) { list.append(itm); });
-});
+$('#sort').click(sortFunc);
 $(document).ready(function () {
   var iconslist = $('<ul id="list"></ul>');
   $.getJSON('data/icons.json', function (data) {
