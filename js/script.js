@@ -68,6 +68,11 @@ var compareFuncs = {
     var aa = gInfoMap[$(a).attr('id').replace('#', '')].hsl.h,
       bb = gInfoMap[$(b).attr('id').replace('#', '')].hsl.h;
     return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
+  },
+  gray : function (a, b) {
+    var aa = gInfoMap[$(a).attr('id').replace('#', '')].gray,
+      bb = gInfoMap[$(b).attr('id').replace('#', '')].gray;
+    return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
   }
 };
 
@@ -88,6 +93,8 @@ var sortFunc = function (type) {
 
 $('#sort').click(sortFunc('id'));
 $('#huesort').click(sortFunc('hue'));
+$('#graysort').click(sortFunc('gray'));
+
 $(document).ready(function () {
   var iconslist = $('<ul id="list"></ul>');
   $.getJSON('data/icons.json', function (data) {
