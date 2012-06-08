@@ -30,7 +30,7 @@ var allLoaded = function () {
     pixel = gImgData.data;
     for (i = image.width - 1; i >= 0; i -= 1) {
       for (j = image.height - 1; j >= 0; j -= 1) {
-	pos = (i + gImgData.width * j) * 4;
+        pos = (i + gImgData.width * j) * 4;
         color = Util.rgba(
           pixel[pos],
           pixel[pos + 1],
@@ -55,19 +55,28 @@ var allLoaded = function () {
     };
   });
   $state.html('Ready');
+  console.log(gInfoMap);
 };
 
-var sortFunc = (function () {
-  var togleState = false,
-    compareFunc = function (a, b) {
-      var aa = +$(a).attr('id').replace('#', ''),
-        bb = +$(b).attr('id').replace('#', '');
-      return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
-    };
+var compareFuncs = {
+  id : function (a, b) {
+    var aa = +$(a).attr('id').replace('#', ''),
+      bb = +$(b).attr('id').replace('#', '');
+    return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
+  },
+  hue : function (a, b) {
+    var aa = gInfoMap[$(a).attr('id').replace('#', '')].hsl.h,
+      bb = gInfoMap[$(b).attr('id').replace('#', '')].hsl.h;
+    return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
+  }
+};
+
+var sortFunc = function (type) {
+  var togleState = false;
   return function (evt) {
     var list = $('#list'),
       listitems = list.children('li').get();
-    listitems.sort(compareFunc);
+    listitems.sort(compareFuncs[type]);
     if (togleState) {
       listitems.reverse();
     }
@@ -75,9 +84,10 @@ var sortFunc = (function () {
     evt.target.innerHTML = (togleState) ? 'Sort' : 'RSort';
     togleState = !togleState;
   };
-}());
+};
 
-$('#sort').click(sortFunc);
+$('#sort').click(sortFunc('id'));
+$('#huesort').click(sortFunc('hue'));
 $(document).ready(function () {
   var iconslist = $('<ul id="list"></ul>');
   $.getJSON('data/icons.json', function (data) {
@@ -98,6 +108,6 @@ $(document).ready(function () {
       iconslist.append(gIconTemplate(data[i]));
     }
     $content.append(iconslist);
-    $('img').load(checkLoaded);
+    $('img').load(checkLoaded).error(checkLoaded);
   });
 });
