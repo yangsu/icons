@@ -14,7 +14,7 @@ var
 
   gCanvas = document.createElement('canvas'),
   gContext,
-  imgData;
+  gImgData;
 
 gCanvas.width = gSize;
 gCanvas.height = gSize;
@@ -26,11 +26,11 @@ var allLoaded = function () {
   $('img').each(function (count, image) {
     $el = $(this);
     gContext.drawImage(image, 0, 0);
-    imgData = gContext.getImageData(0, 0, image.width, image.height);
-    pixel = imgData.data;
+    gImgData = gContext.getImageData(0, 0, image.width, image.height);
+    pixel = gImgData.data;
     for (i = image.width - 1; i >= 0; i -= 1) {
       for (j = image.height - 1; j >= 0; j -= 1) {
-        pos = (i + imgData.width * j) * 4;
+	pos = (i + gImgData.width * j) * 4;
         color = Util.rgba(
           pixel[pos],
           pixel[pos + 1],
