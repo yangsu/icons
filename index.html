@@ -14,10 +14,10 @@
 
   <script src="js/libs/modernizr-2.5.3.min.js"></script>
   <script id="icontemplate" type="text/html">
-  <li class="list-item">
+  <li id="#<%= number %>" class="list-item">
     <figure>
       <a class="link" href="<%= link %>">
-        <img class="icon s256" src="<%= image %>"></img>
+        <img class="icon s256" src="<%= image %>" number="<%= number %>"></img>
       </a>
       <figcaption>
         <%= name %>
@@ -29,7 +29,9 @@
 <body>
   <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
   <header>
-
+    <button id="sort">Sort</button>
+    <button id="rsort">Reverse</button>
+    <span id="state">Loading...</span>
   </header>
   <div role="main" id="content">
   </div>
