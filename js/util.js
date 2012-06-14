@@ -15,6 +15,15 @@ var Util = {
 
     return context.getImageData(0, 0, image.width, image.height);
   },
+  setImageData : function (imagedata, x, y, color) {
+    var data = imagedata.data,
+      position = (x + imagedata.width * y) * 4;
+
+    data[position] = color.r;
+    data[position + 1] = color.g;
+    data[position + 2] = color.b;
+    data[position + 3] = color.a;
+  },
   rgba : function (r, g, b, a) {
     return {
       r: r,

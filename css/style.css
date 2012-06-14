@@ -73,9 +73,22 @@ figcaption {
   float: left;
 }
 
-img {
+.s100 {
   width: 100px;
   height: 100px;
+}
+.s256 {
+  width: 256px;
+  height: 256px;
+}
+
+#content {
+  margin: auto;
+  text-align: center;
+}
+
+.container {
+  float: left;
 }
 @media only screen and (min-width: 35em) {
 
