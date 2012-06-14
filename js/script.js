@@ -71,11 +71,46 @@ var compareFuncs = {
       bb = gInfoMap[bn].h;
     return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
   },
+  saturation : function (a, b) {
+    var an = +a.attributes.number.value,
+      bn = +b.attributes.number.value,
+      aa = gInfoMap[an].s,
+      bb = gInfoMap[bn].s;
+    return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
+  },
+  lightness : function (a, b) {
+    var an = +a.attributes.number.value,
+      bn = +b.attributes.number.value,
+      aa = gInfoMap[an].l,
+      bb = gInfoMap[bn].l;
+    return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
+  },
   gray : function (a, b) {
     var an = +a.attributes.number.value,
       bn = +b.attributes.number.value,
       aa = gInfoMap[an].gray,
       bb = gInfoMap[bn].gray;
+    return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
+  },
+  red : function (a, b) {
+    var an = +a.attributes.number.value,
+      bn = +b.attributes.number.value,
+      aa = gInfoMap[an].r,
+      bb = gInfoMap[bn].r;
+    return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
+  },
+  green : function (a, b) {
+    var an = +a.attributes.number.value,
+      bn = +b.attributes.number.value,
+      aa = gInfoMap[an].g,
+      bb = gInfoMap[bn].g;
+    return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
+  },
+  blue : function (a, b) {
+    var an = +a.attributes.number.value,
+      bn = +b.attributes.number.value,
+      aa = gInfoMap[an].b,
+      bb = gInfoMap[bn].b;
     return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
   }
 };
@@ -96,7 +131,12 @@ var sortFunc = function (type) {
 };
 
 $('#sort').click(sortFunc('id'));
+$('#rsort').click(sortFunc('red'));
+$('#gsort').click(sortFunc('green'));
+$('#bsort').click(sortFunc('blue'));
 $('#huesort').click(sortFunc('hue'));
+$('#satsort').click(sortFunc('saturation'));
+$('#lightsort').click(sortFunc('lightness'));
 $('#graysort').click(sortFunc('gray'));
 
 $(document).ready(function () {
