@@ -21,11 +21,13 @@ gContext = gCanvas.getContext('2d');
 
 
 var processImages = function () {
-  var i, j, pixel, pos, color, sum = Util.rgba(0, 0, 0, 255), $el, c = 0;
+  var i, j, pixel, pos, sum, $el, c = 0;
   $('img').each(function (ii, image) {
     c += 1;
+
     $state.html('Processing Images ... ' + c + '/' + gTotalCount);
 
+    sum = new Color(0, 0, 0, 255);
     $el = $(this);
     gContext.drawImage(image, 0, 0);
     if (!image.width && !image.height) {
@@ -37,16 +39,10 @@ var processImages = function () {
     for (i = image.width - 1; i >= 0; i -= 1) {
       for (j = image.height - 1; j >= 0; j -= 1) {
         pos = (i + gImgData.width * j) * 4;
-        color = Util.rgba(
-          pixel[pos],
-          pixel[pos + 1],
-          pixel[pos + 2],
-          pixel[pos + 3]
-        );
-        sum.r = sum.r + color.r;
-        sum.g = sum.g + color.g;
-        sum.b = sum.b + color.b;
-        sum.a = sum.a + color.a;
+        sum.r = sum.r + pixel[pos];
+        sum.g = sum.g + pixel[pos + 1];
+        sum.b = sum.b + pixel[pos + 2];
+        sum.a = sum.a + pixel[pos + 3];
       }
     }
     sum.r = sum.r / gSizeSQ;
@@ -54,31 +50,32 @@ var processImages = function () {
     sum.b = sum.b / gSizeSQ;
     sum.a = sum.a / gSizeSQ;
 
-    gInfoMap[$el.attr('number')] = {
-      rgba : sum,
-      hsl : Util.rgbToHsl(sum),
-      gray : Util.gray(sum)
-    };
+    sum.generateConversions();
+    $el.css('border', 'solid 5px '+sum.toHEX());
+    gInfoMap[$el.attr('number')] = sum;
 
   });
-  // $state.html('Ready');
-  console.log(gInfoMap);
+  $state.html('Ready');
 };
 
 var compareFuncs = {
   id : function (a, b) {
-    var aa = +$(a).attr('number'),
-      bb = +$(b).attr('number');
+    var aa = +a.attributes.number.value,
+      bb = +b.attributes.number.value;
     return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
   },
   hue : function (a, b) {
-    var aa = (gInfoMap[$(a).attr('number')]) ? gInfoMap[$(a).attr('number')].hsl.h : $(a).attr('number'),
-      bb = (gInfoMap[$(b).attr('number')]) ? gInfoMap[$(b).attr('number')].hsl.h : $(b).attr('number');
+    var an = +a.attributes.number.value,
+      bn = +b.attributes.number.value,
+      aa = gInfoMap[an].h,
+      bb = gInfoMap[bn].h;
     return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
   },
   gray : function (a, b) {
-    var aa = (gInfoMap[$(a).attr('number')]) ? gInfoMap[$(a).attr('number')].gray : $(a).attr('number'),
-      bb = (gInfoMap[$(b).attr('number')]) ? gInfoMap[$(b).attr('number')].gray : $(b).attr('number');
+    var an = +a.attributes.number.value,
+      bn = +b.attributes.number.value,
+      aa = gInfoMap[an].gray,
+      bb = gInfoMap[bn].gray;
     return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
   }
 };
@@ -131,7 +128,9 @@ $(document).ready(function () {
     var c = 0;
     _.each(data, function (category, key) {
       c += 1;
-      if (c > 5) return;
+      if (c > 2) {
+        return;
+      }
       gTotalCount += _.chain(category).pluck('image').compact().value().length;
       var i, filename, result;
       for (i = category.length - 1; i >= 0; i -= 1) {

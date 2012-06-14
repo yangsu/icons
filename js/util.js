@@ -113,7 +113,7 @@ Color.prototype.toHSL = function () {
   return this;
 };
 
-Color.prototype.hue2rgb = function (p, q, t) {
+Color.hue2rgb = function (p, q, t) {
   if (t < 0) {
     t += 1;
   }
@@ -132,31 +132,36 @@ Color.prototype.hue2rgb = function (p, q, t) {
   return p;
 };
 
-Color.prototype.hslToRgb = function () {
+Color.prototype.toRGB = function () {
   var r, g, b, p, q;
-
-  if (this.s === 0) {
-    r = g = b = this.l; // achromatic
-  } else {
-    q = this.l < 0.5 ? this.l * (1 + this.s) : this.l + this.s - this.l * this.s;
-    p = 2 * this.l - q;
-    r = Util.hue2rgb(p, q, this.h + 1 / 3);
-    g = Util.hue2rgb(p, q, this.h);
-    b = Util.hue2rgb(p, q, this.h - 1 / 3);
+  if (_.isUndefined(this.r) || _.isUndefined(this.g) || _.isUndefined(this.b)) {
+    if (this.s === 0) {
+      r = g = b = this.l; // achromatic
+    } else {
+      q = this.l < 0.5 ? this.l * (1 + this.s) : this.l + this.s - this.l * this.s;
+      p = 2 * this.l - q;
+      r = Color.hue2rgb(p, q, this.h + 1 / 3);
+      g = Color.hue2rgb(p, q, this.h);
+      b = Color.hue2rgb(p, q, this.h - 1 / 3);
+    }
+    this.r = r * 255;
+    this.g = g * 255;
+    this.b = b * 255;
+    this.a = 255;
   }
-  this.r = r * 255;
-  this.g = g * 255;
-  this.b = b * 255;
-  this.a = 255;
-
   return this;
 };
 
-Color.prototype.componentToHex = function (c) {
+Color.componentToHex = function (c) {
   var hex = Math.round(c).toString(16);
   return hex.length === 1 ? '0' + hex : hex;
 };
 
-Color.prototype.rgbToHex = function () {
-  return "#" + this.componentToHex(this.r) + this.componentToHex(this.g) + this.componentToHex(this.b);
+Color.prototype.toHEX = function () {
+  return "#" + Color.componentToHex(this.r) + Color.componentToHex(this.g) + Color.componentToHex(this.b);
 };
+
+Color.prototype.generateConversions = function () {
+  this.toGray();
+  this.toHSL();
+}
