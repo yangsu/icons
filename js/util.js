@@ -24,18 +24,10 @@ var Util = {
     data[position + 2] = color.b;
     data[position + 3] = color.a;
   },
-  rgba : function (r, g, b, a) {
-    return {
-      r: r,
-      g: g,
-      b: b,
-      a: a
-    };
-  },
   getPixel : function (imagedata, x, y) {
     var data = imagedata.data,
       position = (x + imagedata.width * y) * 4;
-    return Util.rgba(
+    return new Color(
       data[position],
       data[position + 1],
       data[position + 2],
@@ -49,7 +41,7 @@ var Util = {
       end = imagedata.width,
       i;
     for (i = 0; i < end; position += 4, i += 1) {
-      row[i] = Util.rgba(
+      row[i] = new Color(
         data[position],
         data[position + 1],
         data[position + 2],
@@ -66,7 +58,7 @@ var Util = {
       end = imagedata.height,
       i;
     for (i = 0; i < end; position += inc, i += 1) {
-      column[i] = Util.rgba(
+      column[i] = new Color(
         data[position],
         data[position + 1],
         data[position + 2],
@@ -74,17 +66,28 @@ var Util = {
       );
     }
     return column;
-  },
-  gray : function (color) {
-    return 0.2989 * color.r + 0.5870 * color.g + 0.1140 * color.b;
-  },
-  grayToRGB : function (gray) {
-    return Util.rgba(gray, gray, gray, 255);
-  },
-  rgbToHsl : function (color) {
-    var r = color.r / 255,
-      g = color.g / 255,
-      b = color.b / 255,
+  }
+};
+
+var Color = function (r, g, b, a) {
+  this.r = r;
+  this.g = g;
+  this.b = b;
+  this.a = a;
+};
+
+Color.prototype.toGray = function () {
+  if (_.isUndefined(this.gray)) {
+    this.gray = 0.2989 * this.r + 0.5870 * this.g + 0.1140 * this.b;
+  }
+  return this.gray;
+};
+
+Color.prototype.toHSL = function () {
+  if (_.isUndefined(this.h) || _.isUndefined(this.s) || _.isUndefined(this.l)) {
+    var r = this.r / 255,
+      g = this.g / 255,
+      b = this.b / 255,
       max = Math.max(r, g, b),
       min = Math.min(r, g, b),
       h,
@@ -103,54 +106,57 @@ var Util = {
       }
       h /= 6;
     }
-
-    return {
-      h: h,
-      s: s,
-      l: l
-    };
-  },
-  hue2rgb : function (p, q, t) {
-    if (t < 0) {
-      t += 1;
-    }
-    if (t > 1) {
-      t -= 1;
-    }
-    if (t < 1 / 6) {
-      return p + (q - p) * 6 * t;
-    }
-    if (t < 1 / 2) {
-      return q;
-    }
-    if (t < 2 / 3) {
-      return p + (q - p) * (2 / 3 - t) * 6;
-    }
-    return p;
-  },
-
-  hslToRgb : function (h, s, l) {
-    var r, g, b, p, q;
-
-    if (s === 0) {
-      r = g = b = l; // achromatic
-    } else {
-      q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-      p = 2 * l - q;
-      r = Util.hue2rgb(p, q, h + 1 / 3);
-      g = Util.hue2rgb(p, q, h);
-      b = Util.hue2rgb(p, q, h - 1 / 3);
-    }
-
-    return Util.rgba(r * 255, g * 255, b * 255, 255);
-  },
-
-  componentToHex : function (c) {
-    var hex = Math.round(c).toString(16);
-    return hex.length === 1 ? '0' + hex : hex;
-  },
-
-  rgbToHex : function (color) {
-    return "#" + Util.componentToHex(color.r) + Util.componentToHex(color.g) + Util.componentToHex(color.b);
+    this.h = h;
+    this.s = s;
+    this.l = l;
   }
+  return this;
+};
+
+Color.prototype.hue2rgb = function (p, q, t) {
+  if (t < 0) {
+    t += 1;
+  }
+  if (t > 1) {
+    t -= 1;
+  }
+  if (t < 1 / 6) {
+    return p + (q - p) * 6 * t;
+  }
+  if (t < 1 / 2) {
+    return q;
+  }
+  if (t < 2 / 3) {
+    return p + (q - p) * (2 / 3 - t) * 6;
+  }
+  return p;
+};
+
+Color.prototype.hslToRgb = function () {
+  var r, g, b, p, q;
+
+  if (this.s === 0) {
+    r = g = b = this.l; // achromatic
+  } else {
+    q = this.l < 0.5 ? this.l * (1 + this.s) : this.l + this.s - this.l * this.s;
+    p = 2 * this.l - q;
+    r = Util.hue2rgb(p, q, this.h + 1 / 3);
+    g = Util.hue2rgb(p, q, this.h);
+    b = Util.hue2rgb(p, q, this.h - 1 / 3);
+  }
+  this.r = r * 255;
+  this.g = g * 255;
+  this.b = b * 255;
+  this.a = 255;
+
+  return this;
+};
+
+Color.prototype.componentToHex = function (c) {
+  var hex = Math.round(c).toString(16);
+  return hex.length === 1 ? '0' + hex : hex;
+};
+
+Color.prototype.rgbToHex = function () {
+  return "#" + this.componentToHex(this.r) + this.componentToHex(this.g) + this.componentToHex(this.b);
 };

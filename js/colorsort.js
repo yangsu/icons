@@ -19,7 +19,9 @@ gCanvas.height = gSize;
 gContext = gCanvas.getContext('2d');
 
 var processImage = function () {
-  var i, j, pixel, pos, color, colorMap = {}, sum = Util.rgba(0, 0, 0, 255);
+  var i, j, pixels, pos, color,
+    colorMap = {},
+    sum = new Color(0, 0, 0, 255);
   gContext.drawImage($('#image')[0], 0, 0);
   if (!image.width && !image.height) {
     console.log(image);
@@ -30,7 +32,7 @@ var processImage = function () {
   for (i = image.width - 1; i >= 0; i -= 1) {
     for (j = image.height - 1; j >= 0; j -= 1) {
       pos = (i + gImgData.width * j) * 4;
-      color = Util.rgba(
+      color = new Color(
         pixels[pos],
         pixels[pos + 1],
         pixels[pos + 2],
@@ -44,8 +46,8 @@ var processImage = function () {
       colorMap[i + '|' + j] = {
         pos: pos,
         color: color,
-        hsl: Util.rgbToHsl(color),
-        gray : Util.gray(color),
+        hsl: color.toHSL(),
+        gray : color.toGray()
       };
     }
   }
@@ -58,8 +60,8 @@ var processImage = function () {
     colorMap : colorMap,
     img : image,
     rgba : sum,
-    hsl : Util.rgbToHsl(sum),
-    gray : Util.gray(sum)
+    hsl : sum.toHSL(),
+    gray : sum.toGray()
   };
 };
 
@@ -82,16 +84,16 @@ var compareFuncs = {
 };
 
 var sortFunc = function (type) {
-  var togleState = false;
+  var togleState = false, x, y, pos;
   return function (evt) {
     var pixels = _.map(gColorInfo.colorMap, function (val) { return val; });
     pixels.sort(compareFuncs[type]);
     if (togleState) {
       pixels.reverse();
     }
-    var x, y, pos;
-    for (x = 0; x < gColorInfo.img.width; x++) {
-      for (y = 0; y < gColorInfo.img.height; y++) {
+
+    for (x = 0; x < gColorInfo.img.width; x += 1) {
+      for (y = 0; y < gColorInfo.img.height; y += 1) {
         pos = x + gImgData.width * y;
         Util.setImageData(gImgData, x, y, pixels[pos].color);
       }
@@ -106,13 +108,13 @@ var generateNextImage = function () {
   var image = gImages[Math.floor(Math.random() * gImages.length)];
   $('#image').remove();
   $imgContainer.append(gImgTemplate(image));
-  $('#image').load(processImage)
+  $('#image').load(processImage);
 };
 
 $('#sort').click(sortFunc('id'));
 $('#huesort').click(sortFunc('hue'));
 $('#graysort').click(sortFunc('gray'));
-$('#next').click(function() { generateNextImage() });
+$('#next').click(function () { generateNextImage(); });
 $(document).ready(function () {
   $.getJSON('data/icons.json', function (data) {
     var filename;
@@ -121,7 +123,7 @@ $(document).ready(function () {
       return {
         image: 'data/icons/' + filename.replace(/(s\d{2,3})/, 's' + gSize)
       };
-    })
+    });
     generateNextImage();
   });
 });
