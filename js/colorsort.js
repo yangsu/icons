@@ -87,6 +87,15 @@ $('#sort').click(sortFunc('id'));
 $('#huesort').click(sortFunc('hue'));
 $('#graysort').click(sortFunc('gray'));
 $('#next').click(function () { generateNextImage(); });
+$('#filter').click(function () {
+  gCanvas.filter([
+    [1/9, 1/9, 1/9],
+    [1/9, 1/9, 1/9],
+    [1/9, 1/9, 1/9],
+  ]);
+  gCanvas.inval();
+});
+
 $(document).ready(function () {
   $.getJSON('data/icons.json', function (data) {
     var filename;

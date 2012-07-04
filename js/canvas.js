@@ -91,5 +91,26 @@
     this.ctx.putImageData(this.imageData, 0, 0);
   };
 
+  Canvas.prototype.filter = function (kernel) {
+    if (kernel && kernel.length === 3 && kernel[0].length === 3) {
+      var i, j, w, h, sum;
+      for (i = 1, w = this.width - 1; i < w; i += 1) {
+        for (j = 1, h = this.height - 1; j < h; j += 1) {
+          sum =
+            this.pixels[this.getPixelPos(i - 1, j - 1)].toGray() * kernel[0][0] +
+            this.pixels[this.getPixelPos(i - 1, j)].toGray() * kernel[0][1] +
+            this.pixels[this.getPixelPos(i - 1, j + 1)].toGray() * kernel[0][2] +
+            this.pixels[this.getPixelPos(i, j - 1)].toGray() * kernel[1][0] +
+            this.pixels[this.getPixelPos(i, j)].toGray() * kernel[1][1] +
+            this.pixels[this.getPixelPos(i, j + 1)].toGray() * kernel[1][2] +
+            this.pixels[this.getPixelPos(i + 1, j - 1)].toGray() * kernel[2][0] +
+            this.pixels[this.getPixelPos(i + 1, j)].toGray() * kernel[2][1] +
+            this.pixels[this.getPixelPos(i + 1, j + 1)].toGray() * kernel[2][2];
+          this.setPixel(i, j, new Color(sum, sum, sum, 255));
+        }
+      }
+    }
+  };
+
   window.Canvas = Canvas;
 }(window, Color));
