@@ -87,11 +87,30 @@ $('#sort').click(sortFunc('id'));
 $('#huesort').click(sortFunc('hue'));
 $('#graysort').click(sortFunc('gray'));
 $('#next').click(function () { generateNextImage(); });
-$('#filter').click(function () {
+
+$('#blur').click(function () {
   gCanvas.filter([
     [1/9, 1/9, 1/9],
     [1/9, 1/9, 1/9],
     [1/9, 1/9, 1/9],
+  ]);
+  gCanvas.inval();
+});
+
+$('#sharpen').click(function () {
+  gCanvas.filter([
+    [-1/9, -1/9, -1/9],
+    [-1/9, 17/9, -1/9],
+    [-1/9, -1/9, -1/9],
+  ]);
+  gCanvas.inval();
+});
+
+$('#edge').click(function () {
+  gCanvas.filter([
+    [-1/9, -1/9, -1/9],
+    [-1/9, 1, -1/9],
+    [-1/9, -1/9, -1/9],
   ]);
   gCanvas.inval();
 });
