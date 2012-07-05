@@ -29,11 +29,29 @@
     <button id="blur">Blur</button>
     <button id="sharpen">sharpen</button>
     <button id="edge">edge</button>
+    <button id="emboss">emboss</button>
   </header>
   <div role="main" id="content">
     <div id="imgContainer" class="container"></div>
     <div id="canvasContainer" class="container">
       <canvas id="canvas" width="256" height="256"></canvas>
+    </div>
+  </div>
+  <div id="kernel">
+    <div class="kernel-row">
+      <input id="k0" type="text" value="0" class="kernel-cell">
+      <input id="k1" type="text" value="0" class="kernel-cell">
+      <input id="k2" type="text" value="0" class="kernel-cell">
+    </div>
+    <div class="kernel-row">
+      <input id="k3" type="text" value="0" class="kernel-cell">
+      <input id="k4" type="text" value="1" class="kernel-cell">
+      <input id="k5" type="text" value="0" class="kernel-cell">
+    </div>
+    <div class="kernel-row">
+      <input id="k6" type="text" value="0" class="kernel-cell">
+      <input id="k7" type="text" value="0" class="kernel-cell">
+      <input id="k8" type="text" value="0" class="kernel-cell">
     </div>
   </div>
   <footer>

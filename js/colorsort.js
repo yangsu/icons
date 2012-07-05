@@ -108,11 +108,57 @@ $('#sharpen').click(function () {
 
 $('#edge').click(function () {
   gCanvas.filter([
+    [0, 1, 0],
+    [1, -3, 1],
+    [0, 1, 0],
+  ]);
+  gCanvas.inval();
+});
+
+$('#emboss').click(function () {
+  gCanvas.filter([
     [-2, -1, -0],
     [-1, 1, 1],
     [-0, 1, 2],
   ]);
   gCanvas.inval();
+});
+
+var kernel = {
+  k0 : $('#k0'),
+  k1 : $('#k1'),
+  k2 : $('#k2'),
+  k3 : $('#k3'),
+  k4 : $('#k4'),
+  k5 : $('#k5'),
+  k6 : $('#k6'),
+  k7 : $('#k7'),
+  k8 : $('#k8')
+};
+$('#kernel').delegate('.kernel-cell', 'keyup', function (e) {
+  console.log(e.which);
+  var val = kernel[e.target.id].attr('value'),
+    changed = false;
+  if (e.which === 38) { // UP
+    kernel[e.target.id].attr('value', +val + 1);
+    changed = true;
+  } else if (e.which === 40) { // DOWN
+    kernel[e.target.id].attr('value', +val - 1);
+    changed = true;
+  } else if (e.which >= 48 && e.which <= 57) { // 0-9
+
+  } else {
+
+  }
+  if (changed) {
+    var k = [
+      [kernel['k0'].attr('value'), kernel['k1'].attr('value'), kernel['k2'].attr('value')],
+      [kernel['k3'].attr('value'), kernel['k4'].attr('value'), kernel['k5'].attr('value')],
+      [kernel['k6'].attr('value'), kernel['k7'].attr('value'), kernel['k8'].attr('value')],
+    ];
+    gCanvas.filter(k);
+    gCanvas.inval();
+  }
 });
 
 $(document).ready(function () {

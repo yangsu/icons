@@ -90,6 +90,20 @@ figcaption {
 .container {
   float: left;
 }
+
+#kernel {
+  margin: 20px;
+}
+
+.kernel-cell {
+  padding: 4px;
+  margin: 2px;
+  border: 1px #ddd solid;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+}
+
 @media only screen and (min-width: 35em) {
 
 
