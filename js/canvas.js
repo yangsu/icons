@@ -36,8 +36,11 @@
   Canvas.prototype.drawImage = function (image, x, y) {
     this.ctx.drawImage(image, x, y);
     this.imageData = this.ctx.getImageData(0, 0, this.width, this.height);
+    this.imageDataBuffer = this.ctx.getImageData(0, 0, this.width, this.height);
     this.subPixels = this.imageData.data;
+    this.subPixelsBuffer = this.imageDataBuffer.data;
     this.pixels = new Array(this.width * this.height);
+    this.pixelsBuffer = new Array(this.width * this.height);
 
     var c;
     this.eachPixel(function (i, j, pixelPos, pos) {
@@ -49,6 +52,7 @@
       );
       c.generateConversions();
       this.pixels[pixelPos] = c;
+      this.pixelsBuffer[pixelPos] = c;
     });
   };
 
@@ -64,7 +68,7 @@
   };
 
   Canvas.prototype.getPixels = function () {
-    return this.pixels;
+    return _.clone(this.pixels);
   };
 
   Canvas.prototype.getImageData = function () {
@@ -75,33 +79,41 @@
     return this.pixels[this.getPixelPos(x, y)];
   };
 
+  Canvas.prototype.getBufferPixel = function (x, y) {
+    return this.pixelsBuffer[this.getPixelPos(x, y)];
+  };
+
   Canvas.prototype.setPixel = function (x, y, color) {
     var pixelPos = this.getPixelPos(x, y),
       pos = pixelPos * 4;
 
-    this.subPixels[pos] = color.r;
-    this.subPixels[pos + 1] = color.g;
-    this.subPixels[pos + 2] = color.b;
-    this.subPixels[pos + 3] = color.a;
+    this.subPixelsBuffer[pos] = color.r;
+    this.subPixelsBuffer[pos + 1] = color.g;
+    this.subPixelsBuffer[pos + 2] = color.b;
+    this.subPixelsBuffer[pos + 3] = color.a;
 
-    this.pixels[pixelPos] = _.clone(color);
+    this.pixelsBuffer[pixelPos] = _.clone(color);
+  };
+
+  Canvas.prototype.reset = function () {
+    this.ctx.putImageData(this.imageData, 0, 0);
   };
 
   Canvas.prototype.inval = function () {
-    this.ctx.putImageData(this.imageData, 0, 0);
+    this.ctx.putImageData(this.imageDataBuffer, 0, 0);
   };
 
   Canvas.prototype.applyKernel = function (i, j, kernel, val) {
     var sum =
-      this.pixels[this.getPixelPos(i - 1, j - 1)][val] * kernel[0][0] +
-      this.pixels[this.getPixelPos(i, j - 1)][val] * kernel[0][1] +
-      this.pixels[this.getPixelPos(i + 1, j - 1)][val] * kernel[0][2] +
-      this.pixels[this.getPixelPos(i - 1, j)][val] * kernel[1][0] +
-      this.pixels[this.getPixelPos(i, j)][val] * kernel[1][1] +
-      this.pixels[this.getPixelPos(i + 1, j)][val] * kernel[1][2] +
-      this.pixels[this.getPixelPos(i - 1, j + 1)][val] * kernel[2][0] +
-      this.pixels[this.getPixelPos(i, j + 1)][val] * kernel[2][1] +
-      this.pixels[this.getPixelPos(i + 1, j + 1)][val] * kernel[2][2];
+      this.getPixel(i - 1, j - 1)[val] * kernel[0][0] +
+      this.getPixel(i, j - 1)[val] * kernel[0][1] +
+      this.getPixel(i + 1, j - 1)[val] * kernel[0][2] +
+      this.getPixel(i - 1, j)[val] * kernel[1][0] +
+      this.getPixel(i, j)[val] * kernel[1][1] +
+      this.getPixel(i + 1, j)[val] * kernel[1][2] +
+      this.getPixel(i - 1, j + 1)[val] * kernel[2][0] +
+      this.getPixel(i, j + 1)[val] * kernel[2][1] +
+      this.getPixel(i + 1, j + 1)[val] * kernel[2][2];
     return sum;
   };
 
@@ -110,10 +122,10 @@
       var i, j, w, h, r, g, b, a;
       for (i = 1, w = this.width - 1; i < w; i += 1) {
         for (j = 1, h = this.height - 1; j < h; j += 1) {
-          r = this.applyKernel(i, j, kernel, 'r')
-          g = this.applyKernel(i, j, kernel, 'g')
-          b = this.applyKernel(i, j, kernel, 'b')
-          a = this.applyKernel(i, j, kernel, 'a')
+          r = this.applyKernel(i, j, kernel, 'r');
+          g = this.applyKernel(i, j, kernel, 'g');
+          b = this.applyKernel(i, j, kernel, 'b');
+          a = this.applyKernel(i, j, kernel, 'a');
           this.setPixel(i, j, new Color(r, g, b, a));
         }
       }

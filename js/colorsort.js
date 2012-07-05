@@ -87,7 +87,7 @@ $('#sort').click(sortFunc('id'));
 $('#huesort').click(sortFunc('hue'));
 $('#graysort').click(sortFunc('gray'));
 $('#next').click(function () { generateNextImage(); });
-
+$('#reset').click(function () { gCanvas.reset(); });
 $('#blur').click(function () {
   gCanvas.filter([
     [1/9, 1/9, 1/9],
@@ -108,9 +108,9 @@ $('#sharpen').click(function () {
 
 $('#edge').click(function () {
   gCanvas.filter([
-    [-1/9, -1/9, -1/9],
-    [-1/9, 1, -1/9],
-    [-1/9, -1/9, -1/9],
+    [-2, -1, -0],
+    [-1, 1, 1],
+    [-0, 1, 2],
   ]);
   gCanvas.inval();
 });
