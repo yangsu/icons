@@ -114,7 +114,7 @@
       this.getPixel(i - 1, j + 1)[val] * kernel[2][0] +
       this.getPixel(i, j + 1)[val] * kernel[2][1] +
       this.getPixel(i + 1, j + 1)[val] * kernel[2][2];
-    return sum;
+    return (sum === 0) ? sum + 128 : (sum < 0) ? sum + 255 : sum;
   };
 
   Canvas.prototype.filter = function (kernel) {
@@ -126,7 +126,7 @@
           g = this.applyKernel(i, j, kernel, 'g');
           b = this.applyKernel(i, j, kernel, 'b');
           a = this.applyKernel(i, j, kernel, 'a');
-          this.setPixel(i, j, new Color(r, g, b, a));
+          this.setPixel(i, j, new Color(r, g, b, 255));
         }
       }
     }
