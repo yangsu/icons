@@ -173,16 +173,14 @@
     return sum;
   };
 
-  var wrapper = function (kernel, cb) {
+  var timer = function (cb) {
     var start = Date.now();
-    if (kernel && kernel.length === 3 && kernel[0].length === 3) {
-      cb.call(this, kernel);
-    }
+    cb.call(this);
     $timer.html(Date.now() - start);
   };
 
   Canvas.prototype.rgbFilter = function (kernel) {
-    wrapper.call(this, kernel, function (kernel) {
+    timer.call(this, function () {
       var i, j, w, h, c;
       for (i = 0, w = this.width; i < w; i += 1) {
         for (j = 0, h = this.height; j < h; j += 1) {
@@ -194,7 +192,7 @@
   };
 
   Canvas.prototype.rgbaFilter = function (kernel) {
-    wrapper.call(this, kernel, function (kernel) {
+    timer.call(this, function () {
       var i, j, w, h, c;
       for (i = 0, w = this.width; i < w; i += 1) {
         for (j = 0, h = this.height; j < h; j += 1) {
@@ -208,7 +206,7 @@
   Canvas.prototype.filter = Canvas.prototype.rgbFilter;
 
   Canvas.prototype.grayFilter = function (kernel) {
-    wrapper.call(this, kernel, function (kernel) {
+    timer.call(this, function () {
       var i, j, w, h, gray;
       for (i = 0, w = this.width; i < w; i += 1) {
         for (j = 0, h = this.height; j < h; j += 1) {
