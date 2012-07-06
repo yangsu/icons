@@ -108,9 +108,9 @@ $('#sharpen').click(function () {
 
 $('#edge').click(function () {
   gCanvas.filter([
-    [0, 1, 0],
-    [1, -3, 1],
-    [0, 1, 0],
+    [-1, -1, -1],
+    [-1, 8, -1],
+    [-1, -1, -1],
   ]);
   gCanvas.inval();
 });
