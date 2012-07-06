@@ -1,7 +1,9 @@
 (function (window, Color) {
   // require: color, $, _
 
-  var Canvas = function () {};
+  var Canvas = function () {
+    this.stackFilters = true;
+  };
 
   Canvas.fromImage = function (image) {
     if (image && image.width && image.height) {
@@ -103,10 +105,14 @@
 
   Canvas.prototype.reset = function () {
     this.ctx.putImageData(this.imageData, 0, 0);
+    this.computeOriginalPixels();
   };
 
   Canvas.prototype.inval = function () {
     this.ctx.putImageData(this.imageDataBuffer, 0, 0);
+    if (this.stackFilters) {
+      this.computeBufferPixels();
+    }
   };
 
   var normalize = function (val) {
