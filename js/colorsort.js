@@ -124,6 +124,12 @@ $('#emboss').click(function () {
   gCanvas.inval();
 });
 
+$('#pixelate').click(function () {
+  var w = 5,
+    h = 5;
+  gCanvas.paintRegions(gCanvas.regions(w, h), w, h);
+});
+
 var ks = [
   $('#k0'),
   $('#k1'),

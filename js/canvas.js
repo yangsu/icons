@@ -1,4 +1,4 @@
-(function (window, Color) {
+(function (window, Color, Util) {
   // require: color, $, _
 
   var Canvas = function () {
@@ -180,9 +180,10 @@
   };
 
   var timer = function (ctx, cb) {
-    var start = Date.now();
-    cb.call(ctx);
+    var start = Date.now(),
+      rv = cb.call(ctx);
     $timer.html(Date.now() - start);
+    return rv;
   };
 
   Canvas.prototype.rgbFilter = function (kernel) {
@@ -223,5 +224,58 @@
     });
   };
 
+  Canvas.prototype.regions = function (rw, rh) {
+    return timer(this, function () {
+      var w = this.width,
+        h = this.height,
+        row = Math.ceil(w/rw),
+        col = Math.ceil(h/rh),
+        rsize = rw * rh,
+        colors = Util.matrix(row, col),
+        i, j, r, c, color, pcolor;
+
+      for (i = 0; i < w; i += 1) {
+        for (j = 0; j < h; j += 1) {
+          r = Math.floor(i/rw);
+          c = Math.floor(j/rh);
+          color = colors[r][c];
+          pcolor = this.getPixel(i, j);
+          if (color) {
+            color.r += pcolor.r;
+            color.g += pcolor.g;
+            color.b += pcolor.b;
+          } else {
+            colors[r][c] = new Color(pcolor.r, pcolor.g, pcolor.b, 255)
+          }
+        }
+      }
+
+      for (r = 0; r < row; r += 1) {
+        for (c = 0; c < col; c += 1) {
+          color = colors[r][c];
+          color.r /= rsize;
+          color.g /= rsize;
+          color.b /= rsize;
+        }
+      }
+
+      return colors;
+    });
+  };
+
+  Canvas.prototype.paintRegions = function (regions, rw, rh) {
+    var row = regions.length,
+      col = regions[0].length,
+      i, j, w, h, r, c;
+    for (i = 0, w = this.width; i < w; i += 1) {
+      for (j = 0, h = this.height; j < h; j += 1) {
+        r = Math.floor(i/rw);
+        c = Math.floor(j/rh);
+        this.setPixel(i, j, regions[r][c]);
+      }
+    }
+    this.inval();
+  };
+
   window.Canvas = Canvas;
-}(window, Color));
+}(window, Color, Util));
