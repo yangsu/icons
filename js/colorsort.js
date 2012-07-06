@@ -144,18 +144,17 @@ var kernel = [
 
 $timer = $('#timer');
 $('#kernel').delegate('.kernel-cell', 'keyup', function (e) {
-  console.log(e.which);
   var i = +e.target.id.slice(1),
     r = Math.floor(i/3),
     c = i%3,
     val = +ks[i].attr('value'),
     changed = false;
   if (e.which === 38) { // UP
-    ks[i].attr('value', val + 1);
+    ks[i].attr('value', ++val);
     kernel[r][c] = val;
     changed = true;
   } else if (e.which === 40) { // DOWN
-    ks[i].attr('value', val - 1);
+    ks[i].attr('value', --val);
     kernel[r][c] = val;
     changed = true;
   } else if (e.which >= 48 && e.which <= 57) { // 0-9
@@ -163,6 +162,7 @@ $('#kernel').delegate('.kernel-cell', 'keyup', function (e) {
   } else {
 
   }
+
   if (changed) {
     gCanvas.filter(kernel);
     gCanvas.inval();
