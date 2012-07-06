@@ -109,6 +109,18 @@
     this.ctx.putImageData(this.imageDataBuffer, 0, 0);
   };
 
+  var normalize = function (val) {
+    return (val === 0) ? val + 128 : (val < 0) ? val + 255 : val;
+  };
+  var identity = function (val) {
+    return val;
+  };
+
+  Canvas.prototype.setNormalize = function (bool) {
+    // Canvas.prototype.normalize = (bool) ? normalize : identity;
+    this.normalize = (bool) ? normalize : identity;
+  };
+
   Canvas.prototype.applyGrayKernel = function (i, j, kernel) {
     var sum =
       this.getPixel(i - 1, j - 1).gray * kernel[0][0] +
@@ -120,7 +132,7 @@
       this.getPixel(i - 1, j + 1).gray * kernel[2][0] +
       this.getPixel(i, j + 1).gray * kernel[2][1] +
       this.getPixel(i + 1, j + 1).gray * kernel[2][2];
-    return (sum === 0) ? sum + 128 : (sum < 0) ? sum + 255 : sum;
+    return sum;
   };
 
   Canvas.prototype.applyKernel = function (i, j, kernel, val) {
@@ -134,7 +146,7 @@
       this.getPixel(i - 1, j + 1)[val] * kernel[2][0] +
       this.getPixel(i, j + 1)[val] * kernel[2][1] +
       this.getPixel(i + 1, j + 1)[val] * kernel[2][2];
-    return (sum === 0) ? sum + 128 : (sum < 0) ? sum + 255 : sum;
+    return sum;
   };
 
   var wrapper = function (kernel, cb) {
