@@ -121,6 +121,44 @@
     this.normalize = (bool) ? normalize : identity;
   };
 
+  var computeRGBKernel = function (i, val, o) {
+    o.r += i.r * val;
+    o.g += i.g * val;
+    o.b += i.b * val;
+  }, computeRGBAKernel = function (i, val, o) {
+    computeRGBKernel(i, val, o);
+    o.a += i.a * val;
+  };
+
+  Canvas.prototype.applyRGBKernel = function (i, j, kernel) {
+    var centerPixel = this.getPixel(i, j),
+      c = new Color(0, 0, 0, centerPixel.a);
+    computeRGBKernel(this.getPixel(i - 1, j - 1), kernel[0][0], c);
+    computeRGBKernel(this.getPixel(i, j - 1), kernel[0][1], c);
+    computeRGBKernel(this.getPixel(i + 1, j - 1), kernel[0][2], c);
+    computeRGBKernel(this.getPixel(i - 1, j), kernel[1][0], c);
+    computeRGBKernel(centerPixel, kernel[1][1], c);
+    computeRGBKernel(this.getPixel(i + 1, j), kernel[1][2], c);
+    computeRGBKernel(this.getPixel(i - 1, j + 1), kernel[2][0], c);
+    computeRGBKernel(this.getPixel(i, j + 1), kernel[2][1], c);
+    computeRGBKernel(this.getPixel(i + 1, j + 1), kernel[2][2], c);
+    return c;
+  };
+
+  Canvas.prototype.applyRGBAKernel = function (i, j, kernel) {
+    var c = new Color(0, 0, 0, 0);
+    computeRGBAKernel(this.getPixel(i - 1, j - 1), kernel[0][0], c);
+    computeRGBAKernel(this.getPixel(i, j - 1), kernel[0][1], c);
+    computeRGBAKernel(this.getPixel(i + 1, j - 1), kernel[0][2], c);
+    computeRGBAKernel(this.getPixel(i - 1, j), kernel[1][0], c);
+    computeRGBAKernel(this.getPixel(i, j), kernel[1][1], c);
+    computeRGBAKernel(this.getPixel(i + 1, j), kernel[1][2], c);
+    computeRGBAKernel(this.getPixel(i - 1, j + 1), kernel[2][0], c);
+    computeRGBAKernel(this.getPixel(i, j + 1), kernel[2][1], c);
+    computeRGBAKernel(this.getPixel(i + 1, j + 1), kernel[2][2], c);
+    return c;
+  };
+
   Canvas.prototype.applyGrayKernel = function (i, j, kernel) {
     var sum =
       this.getPixel(i - 1, j - 1).gray * kernel[0][0] +
@@ -135,20 +173,6 @@
     return sum;
   };
 
-  Canvas.prototype.applyKernel = function (i, j, kernel, val) {
-    var sum =
-      this.getPixel(i - 1, j - 1)[val] * kernel[0][0] +
-      this.getPixel(i, j - 1)[val] * kernel[0][1] +
-      this.getPixel(i + 1, j - 1)[val] * kernel[0][2] +
-      this.getPixel(i - 1, j)[val] * kernel[1][0] +
-      this.getPixel(i, j)[val] * kernel[1][1] +
-      this.getPixel(i + 1, j)[val] * kernel[1][2] +
-      this.getPixel(i - 1, j + 1)[val] * kernel[2][0] +
-      this.getPixel(i, j + 1)[val] * kernel[2][1] +
-      this.getPixel(i + 1, j + 1)[val] * kernel[2][2];
-    return sum;
-  };
-
   var wrapper = function (kernel, cb) {
     var start = Date.now();
     if (kernel && kernel.length === 3 && kernel[0].length === 3) {
@@ -159,13 +183,11 @@
 
   Canvas.prototype.rgbFilter = function (kernel) {
     wrapper.call(this, kernel, function (kernel) {
-      var i, j, w, h, r, g, b, a;
+      var i, j, w, h, c;
       for (i = 0, w = this.width; i < w; i += 1) {
         for (j = 0, h = this.height; j < h; j += 1) {
-          r = this.applyKernel(i, j, kernel, 'r');
-          g = this.applyKernel(i, j, kernel, 'g');
-          b = this.applyKernel(i, j, kernel, 'b');
-          this.setPixel(i, j, Color.fromRGBA(r, g, b));
+          c = this.applyRGBKernel(i, j, kernel);
+          this.setPixel(i, j, c);
         }
       }
     });
@@ -173,20 +195,19 @@
 
   Canvas.prototype.rgbaFilter = function (kernel) {
     wrapper.call(this, kernel, function (kernel) {
-      var i, j, w, h, r, g, b, a;
+      var i, j, w, h, c;
       for (i = 0, w = this.width; i < w; i += 1) {
         for (j = 0, h = this.height; j < h; j += 1) {
-          r = this.applyKernel(i, j, kernel, 'r');
-          g = this.applyKernel(i, j, kernel, 'g');
-          b = this.applyKernel(i, j, kernel, 'b');
-          a = this.applyKernel(i, j, kernel, 'a');
-          this.setPixel(i, j, Color.fromRGBA(r, g, b, a));
+          c = this.applyRGBAKernel(i, j, kernel);
+          this.setPixel(i, j, c);
         }
       }
     });
   };
 
-  Canvas.prototype.filter = function (kernel) {
+  Canvas.prototype.filter = Canvas.prototype.rgbFilter;
+
+  Canvas.prototype.grayFilter = function (kernel) {
     wrapper.call(this, kernel, function (kernel) {
       var i, j, w, h, gray;
       for (i = 0, w = this.width; i < w; i += 1) {
