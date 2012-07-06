@@ -30,7 +30,7 @@
   };
 
   Canvas.prototype.getPixelPos = function (x, y) {
-    return (x + this.width * y);
+    return (Math.max(Math.min(x, this.width - 1), 0) + this.width * Math.max(Math.min(y, this.height - 1), 0));
   };
 
   Canvas.prototype.drawImage = function (image, x, y) {
@@ -40,7 +40,6 @@
     this.subPixels = this.imageData.data;
     this.subPixelsBuffer = this.imageDataBuffer.data;
     this.pixels = new Array(this.width * this.height);
-    this.pixelsBuffer = new Array(this.width * this.height);
 
     var c;
     this.eachPixel(function (i, j, pixelPos, pos) {
@@ -52,7 +51,6 @@
       );
       c.generateConversions();
       this.pixels[pixelPos] = c;
-      this.pixelsBuffer[pixelPos] = c;
     });
   };
 
@@ -91,8 +89,6 @@
     this.subPixelsBuffer[pos + 1] = color.g;
     this.subPixelsBuffer[pos + 2] = color.b;
     this.subPixelsBuffer[pos + 3] = color.a;
-
-    this.pixelsBuffer[pixelPos] = _.clone(color);
   };
 
   Canvas.prototype.reset = function () {
@@ -101,6 +97,20 @@
 
   Canvas.prototype.inval = function () {
     this.ctx.putImageData(this.imageDataBuffer, 0, 0);
+  };
+
+  Canvas.prototype.applyGrayKernel = function (i, j, kernel) {
+    var sum =
+      this.getPixel(i - 1, j - 1).gray * kernel[0][0] +
+      this.getPixel(i, j - 1).gray * kernel[0][1] +
+      this.getPixel(i + 1, j - 1).gray * kernel[0][2] +
+      this.getPixel(i - 1, j).gray * kernel[1][0] +
+      this.getPixel(i, j).gray * kernel[1][1] +
+      this.getPixel(i + 1, j).gray * kernel[1][2] +
+      this.getPixel(i - 1, j + 1).gray * kernel[2][0] +
+      this.getPixel(i, j + 1).gray * kernel[2][1] +
+      this.getPixel(i + 1, j + 1).gray * kernel[2][2];
+    return (sum === 0) ? sum + 128 : (sum < 0) ? sum + 255 : sum;
   };
 
   Canvas.prototype.applyKernel = function (i, j, kernel, val) {
@@ -118,18 +128,21 @@
   };
 
   Canvas.prototype.filter = function (kernel) {
+    var start = Date.now();
     if (kernel && kernel.length === 3 && kernel[0].length === 3) {
       var i, j, w, h, r, g, b, a;
-      for (i = 1, w = this.width - 1; i < w; i += 1) {
-        for (j = 1, h = this.height - 1; j < h; j += 1) {
-          r = this.applyKernel(i, j, kernel, 'r');
-          g = this.applyKernel(i, j, kernel, 'g');
-          b = this.applyKernel(i, j, kernel, 'b');
-          a = this.applyKernel(i, j, kernel, 'a');
-          this.setPixel(i, j, new Color(r, g, b, 255));
+      for (i = 0, w = this.width; i < w; i += 1) {
+        for (j = 0, h = this.height; j < h; j += 1) {
+          // r = this.applyKernel(i, j, kernel, 'r');
+          // g = this.applyKernel(i, j, kernel, 'g');
+          // b = this.applyKernel(i, j, kernel, 'b');
+          // a = this.applyKernel(i, j, kernel, 'a');
+          gray = this.applyGrayKernel(i, j, kernel, 'r');
+          this.setPixel(i, j, new Color(gray, gray, gray, 255));
         }
       }
     }
+    $timer.html(Date.now() - start);
   };
 
   window.Canvas = Canvas;
