@@ -2,7 +2,7 @@
   // require: color, $, _
 
   var Canvas = function () {
-    this.stackFilters = true;
+    this.stackFilters = false;
   };
 
   Canvas.fromImage = function (image) {
@@ -179,14 +179,14 @@
     return sum;
   };
 
-  var timer = function (cb) {
+  var timer = function (ctx, cb) {
     var start = Date.now();
-    cb.call(this);
+    cb.call(ctx);
     $timer.html(Date.now() - start);
   };
 
   Canvas.prototype.rgbFilter = function (kernel) {
-    timer.call(this, function () {
+    timer(this, function () {
       var i, j, w, h, c;
       for (i = 0, w = this.width; i < w; i += 1) {
         for (j = 0, h = this.height; j < h; j += 1) {
@@ -198,7 +198,7 @@
   };
 
   Canvas.prototype.rgbaFilter = function (kernel) {
-    timer.call(this, function () {
+    timer(this, function () {
       var i, j, w, h, c;
       for (i = 0, w = this.width; i < w; i += 1) {
         for (j = 0, h = this.height; j < h; j += 1) {
@@ -212,7 +212,7 @@
   Canvas.prototype.filter = Canvas.prototype.rgbFilter;
 
   Canvas.prototype.grayFilter = function (kernel) {
-    timer.call(this, function () {
+    timer(this, function () {
       var i, j, w, h, gray;
       for (i = 0, w = this.width; i < w; i += 1) {
         for (j = 0, h = this.height; j < h; j += 1) {
