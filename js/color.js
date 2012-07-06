@@ -7,17 +7,13 @@
   };
 
   Color.fromGray = function (gray) {
-    var c = new Color();
+    var c = new Color(gray, gray, gray, 255);
     c.gray = gray;
-    c.r = gray;
-    c.g = gray;
-    c.b = gray;
-    c.a = 255;
     return c;
   };
 
   Color.fromGrayWithConversions = function (gray) {
-    var c = new Color();
+    var c = Color.fromGray(gray);
     c.toHSL();
     return c;
   };
@@ -38,9 +34,25 @@
   };
 
   Color.fromHSLWithConversions = function (h, s, l) {
-    var c = new Color();
+    var c = Color.fromHSL(h, s, l);
     c.toGray();
     c.toRGB();
+    return c;
+  };
+
+  Color.fromHex = function (hex) {
+    var c = new Color();
+    c.r = parseInt(hex.substring(1, 3), 16);
+    c.g = parseInt(hex.substring(3, 5), 16);
+    c.b = parseInt(hex.substring(5), 16);
+    c.a = 255;
+    return c;
+  };
+
+  Color.fromHexWithConversions = function (hex) {
+    var c = Color.fromHexWithConversions(hex);
+    c.toGray();
+    c.toHSL();
     return c;
   };
 
