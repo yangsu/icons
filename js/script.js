@@ -45,12 +45,13 @@ var processImages = function () {
         sum.a = sum.a + pixel[pos + 3];
       }
     }
-    sum.r = sum.r / gSizeSQ;
-    sum.g = sum.g / gSizeSQ;
-    sum.b = sum.b / gSizeSQ;
-    sum.a = sum.a / gSizeSQ;
+    sum = Color.fromRGBAWithConversions(
+      sum.r / gSizeSQ,
+      sum.g / gSizeSQ,
+      sum.b / gSizeSQ,
+      sum.a / gSizeSQ
+    );
 
-    sum.generateConversions();
     $el.css('border', 'solid 5px '+sum.toHEX());
     gInfoMap[$el.attr('number')] = sum;
 
