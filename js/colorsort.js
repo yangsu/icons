@@ -33,8 +33,8 @@ var processImage = function () {
   gColorInfo = {
     img : image,
     rgba : sum,
-    hsl : sum.toHSL(),
-    gray : sum.toGray()
+    hsl : sum.RGBtoHSL(),
+    gray : sum.RGBtoGray()
   };
 };
 
