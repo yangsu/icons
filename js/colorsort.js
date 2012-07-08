@@ -14,8 +14,9 @@ var
 var processImage = function () {
   var i, j, pixels, pos, color,
     colorMap = {},
-    sum = new Color(0, 0, 0, 255);
-  gCanvas.drawImage($('#image')[0], 0, 0);
+    sum = new Color(0, 0, 0, 255),
+    img = $('#image')[0];
+  gCanvas.drawImage(img, 0, 0);
 
   gCanvas.eachPixel(function (x, y, pixelPos) {
     color = gCanvas.pixels[pixelPos];
@@ -31,7 +32,7 @@ var processImage = function () {
   sum.a = sum.a / gSizeSQ;
 
   gColorInfo = {
-    img : image,
+    img : img,
     rgba : sum,
     hsl : sum.RGBtoHSL(),
     gray : sum.RGBtoGray()
@@ -90,18 +91,18 @@ $('#next').click(function () { generateNextImage(); });
 $('#reset').click(function () { gCanvas.reset(); });
 $('#blur').click(function () {
   gCanvas.filter([
-    [1/9, 1/9, 1/9],
-    [1/9, 1/9, 1/9],
-    [1/9, 1/9, 1/9],
+    [1 / 9, 1 / 9, 1 / 9],
+    [1 / 9, 1 / 9, 1 / 9],
+    [1 / 9, 1 / 9, 1 / 9]
   ]);
   gCanvas.inval();
 });
 
 $('#sharpen').click(function () {
   gCanvas.filter([
-    [-1/9, -1/9, -1/9],
-    [-1/9, 17/9, -1/9],
-    [-1/9, -1/9, -1/9],
+    [-1 / 9, -1 / 9, -1 / 9],
+    [-1 / 9, 17 / 9, -1 / 9],
+    [-1 / 9, -1 / 9, -1 / 9]
   ]);
   gCanvas.inval();
 });
@@ -110,7 +111,7 @@ $('#edge').click(function () {
   gCanvas.filter([
     [-1, -1, -1],
     [-1, 8, -1],
-    [-1, -1, -1],
+    [-1, -1, -1]
   ]);
   gCanvas.inval();
 });
@@ -119,7 +120,7 @@ $('#emboss').click(function () {
   gCanvas.filter([
     [-2, -1, -0],
     [-1, 1, 1],
-    [-0, 1, 2],
+    [-0, 1, 2]
   ]);
   gCanvas.inval();
 });
@@ -155,13 +156,13 @@ var ks = [
 var kernel = [
   [0, 0, 0],
   [0, 1, 0],
-  [0, 0, 0],
+  [0, 0, 0]
 ];
 
 $timer = $('#timer');
 $('#kernel').delegate('.kernel-cell', 'keyup', function (e) {
   var i = +e.target.id.slice(1),
-    r = Math.floor(i/3),
+    r = Math.floor(i / 3),
     c = i%3,
     val = +ks[i].attr('value'),
     changed = false;

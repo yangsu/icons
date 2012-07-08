@@ -1,15 +1,15 @@
 var Util = {
   matrix : function (r, c) {
-    var rv = new Array(r),
+    var rv = [],
       i;
     for (i = 0; i < r; i += 1) {
-      rv[i] = new Array(c);
+      rv[i] = [];
     }
     return rv;
   },
   identityKernel: [
     [0, 0, 0],
     [0, 1, 0],
-    [0, 0, 0],
+    [0, 0, 0]
   ]
 };

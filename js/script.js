@@ -52,7 +52,7 @@ var processImages = function () {
       sum.a / gSizeSQ
     );
 
-    $el.css('border', 'solid 5px '+sum.RGBtoHEX());
+    $el.css('border', 'solid 5px ' + sum.RGBtoHEX());
     gInfoMap[$el.attr('number')] = sum;
 
   });
