@@ -6,6 +6,12 @@
     this.a = a;
   };
 
+  Color.empty = function () {
+    var c = new Color(0, 0, 0, 0);
+    c.h = c.s = c.l = 0;
+    return c;
+  };
+
   Color.fromGray = function (gray) {
     var c = new Color(gray, gray, gray, 255);
     c.gray = gray;

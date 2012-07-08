@@ -6,5 +6,10 @@ var Util = {
       rv[i] = new Array(c);
     }
     return rv;
-  }
+  },
+  identityKernel: [
+    [0, 0, 0],
+    [0, 1, 0],
+    [0, 0, 0],
+  ]
 };

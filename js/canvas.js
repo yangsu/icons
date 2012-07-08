@@ -127,57 +127,46 @@
     this.normalize = (bool) ? normalize : identity;
   };
 
-  var computeRGBKernel = function (i, val, o) {
+  var genKernelFunction = function (step, finish) {
+    finish = finish || function (c) { return c; };
+    return function (i, j, kernel) {
+      var centerPixel = this.getPixel(i, j),
+        c = Color.fromHSL(centerPixel.h, centerPixel.s, centerPixel.l);
+      kernel = kernel || Util.identityKernel;
+      step(c, this.getPixel(i - 1, j - 1), kernel[0][0]);
+      step(c, this.getPixel(i, j - 1), kernel[0][1]);
+      step(c, this.getPixel(i + 1, j - 1), kernel[0][2]);
+      step(c, this.getPixel(i - 1, j), kernel[1][0]);
+      step(c, centerPixel, kernel[1][1]);
+      step(c, this.getPixel(i + 1, j), kernel[1][2]);
+      step(c, this.getPixel(i - 1, j + 1), kernel[2][0]);
+      step(c, this.getPixel(i, j + 1), kernel[2][1]);
+      step(c, this.getPixel(i + 1, j + 1), kernel[2][2]);
+      finish(c, centerPixel);
+      return c;
+    };
+  };
+
+  Canvas.prototype.applyRGBKernel = genKernelFunction(function (o, i, val) {
     o.r += i.r * val;
     o.g += i.g * val;
     o.b += i.b * val;
-  }, computeRGBAKernel = function (i, val, o) {
-    computeRGBKernel(i, val, o);
+  }, function (c, centerPixel) {
+    c.a = centerPixel.a;
+  });
+
+  Canvas.prototype.applyRGBAKernel = genKernelFunction(function (o, i, val) {
+    o.r += i.r * val;
+    o.g += i.g * val;
+    o.b += i.b * val;
     o.a += i.a * val;
-  };
+  });
 
-  Canvas.prototype.applyRGBKernel = function (i, j, kernel) {
-    var centerPixel = this.getPixel(i, j),
-      c = new Color(0, 0, 0, centerPixel.a);
-    computeRGBKernel(this.getPixel(i - 1, j - 1), kernel[0][0], c);
-    computeRGBKernel(this.getPixel(i, j - 1), kernel[0][1], c);
-    computeRGBKernel(this.getPixel(i + 1, j - 1), kernel[0][2], c);
-    computeRGBKernel(this.getPixel(i - 1, j), kernel[1][0], c);
-    computeRGBKernel(centerPixel, kernel[1][1], c);
-    computeRGBKernel(this.getPixel(i + 1, j), kernel[1][2], c);
-    computeRGBKernel(this.getPixel(i - 1, j + 1), kernel[2][0], c);
-    computeRGBKernel(this.getPixel(i, j + 1), kernel[2][1], c);
-    computeRGBKernel(this.getPixel(i + 1, j + 1), kernel[2][2], c);
-    return c;
-  };
-
-  Canvas.prototype.applyRGBAKernel = function (i, j, kernel) {
-    var c = new Color(0, 0, 0, 0);
-    computeRGBAKernel(this.getPixel(i - 1, j - 1), kernel[0][0], c);
-    computeRGBAKernel(this.getPixel(i, j - 1), kernel[0][1], c);
-    computeRGBAKernel(this.getPixel(i + 1, j - 1), kernel[0][2], c);
-    computeRGBAKernel(this.getPixel(i - 1, j), kernel[1][0], c);
-    computeRGBAKernel(this.getPixel(i, j), kernel[1][1], c);
-    computeRGBAKernel(this.getPixel(i + 1, j), kernel[1][2], c);
-    computeRGBAKernel(this.getPixel(i - 1, j + 1), kernel[2][0], c);
-    computeRGBAKernel(this.getPixel(i, j + 1), kernel[2][1], c);
-    computeRGBAKernel(this.getPixel(i + 1, j + 1), kernel[2][2], c);
-    return c;
-  };
-
-  Canvas.prototype.applyGrayKernel = function (i, j, kernel) {
-    var sum =
-      this.getPixel(i - 1, j - 1).gray * kernel[0][0] +
-      this.getPixel(i, j - 1).gray * kernel[0][1] +
-      this.getPixel(i + 1, j - 1).gray * kernel[0][2] +
-      this.getPixel(i - 1, j).gray * kernel[1][0] +
-      this.getPixel(i, j).gray * kernel[1][1] +
-      this.getPixel(i + 1, j).gray * kernel[1][2] +
-      this.getPixel(i - 1, j + 1).gray * kernel[2][0] +
-      this.getPixel(i, j + 1).gray * kernel[2][1] +
-      this.getPixel(i + 1, j + 1).gray * kernel[2][2];
-    return sum;
-  };
+  Canvas.prototype.applyGrayKernel = genKernelFunction(function (o, i, val) {
+    o.gray = i.gray * val;
+  }, function (c) {
+    c.GrayToRGB();
+  });
 
   var timer = function (ctx, cb) {
     var start = Date.now(),
@@ -186,97 +175,36 @@
     return rv;
   };
 
-  Canvas.prototype.rgbFilter = function (kernel) {
-    timer(this, function () {
-      var i, j, w, h, c;
-      for (i = 0, w = this.width; i < w; i += 1) {
-        for (j = 0, h = this.height; j < h; j += 1) {
-          c = this.applyRGBKernel(i, j, kernel);
-          this.setPixel(i, j, c);
+  var genFilter = function (op) {
+    return function (kernel) {
+      timer(this, function () {
+        var i, j, w, h;
+        for (i = 0, w = this.width; i < w; i += 1) {
+          for (j = 0, h = this.height; j < h; j += 1) {
+            this.setPixel(i, j, this[op](i, j, kernel));
+          }
         }
-      }
-    });
+      });
+    };
   };
 
-  Canvas.prototype.rgbaFilter = function (kernel) {
-    timer(this, function () {
-      var i, j, w, h, c;
-      for (i = 0, w = this.width; i < w; i += 1) {
-        for (j = 0, h = this.height; j < h; j += 1) {
-          c = this.applyRGBAKernel(i, j, kernel);
-          this.setPixel(i, j, c);
-        }
-      }
-    });
-  };
-
+  Canvas.prototype.rgbFilter = genFilter('applyRGBKernel');
+  Canvas.prototype.rgbaFilter = genFilter('applyRGBAKernel');
+  Canvas.prototype.grayFilter = genFilter('applyGrayKernel');
   Canvas.prototype.filter = Canvas.prototype.rgbFilter;
 
-  Canvas.prototype.grayFilter = function (kernel) {
-    timer(this, function () {
-      var i, j, w, h, gray;
-      for (i = 0, w = this.width; i < w; i += 1) {
-        for (j = 0, h = this.height; j < h; j += 1) {
-          gray = this.applyGrayKernel(i, j, kernel);
-          this.setPixel(i, j, Color.fromGray(gray));
-        }
-      }
+  var genHSLFilter = function (mathop) {
+    return genKernelFunction(function(o, i) {
+      o.l = Math[mathop](o.l, i.l);
+    }, function (c, centerPixel) {
+      c.a = centerPixel.a;
+      c.HSLtoRGB();
     });
   };
-
-  Canvas.prototype.applyErosion = function (i, j) {
-    var currPixel = this.getPixel(i, j),
-      max = Math.max(
-      this.getPixel(i - 1, j - 1).l,
-      this.getPixel(i, j - 1).l,
-      this.getPixel(i + 1, j - 1).l,
-      this.getPixel(i - 1, j).l,
-      currPixel.l,
-      this.getPixel(i + 1, j).l,
-      this.getPixel(i - 1, j + 1).l,
-      this.getPixel(i, j + 1).l,
-      this.getPixel(i + 1, j + 1).l
-    );
-    return Color.fromHSLWithConversions(currPixel.h, currPixel.s, max);
-  };
-
-  Canvas.prototype.applyDilate = function (i, j) {
-    var currPixel = this.getPixel(i, j),
-      min = Math.min(
-      this.getPixel(i - 1, j - 1).l,
-      this.getPixel(i, j - 1).l,
-      this.getPixel(i + 1, j - 1).l,
-      this.getPixel(i - 1, j).l,
-      currPixel.l,
-      this.getPixel(i + 1, j).l,
-      this.getPixel(i - 1, j + 1).l,
-      this.getPixel(i, j + 1).l,
-      this.getPixel(i + 1, j + 1).l
-    );
-    return Color.fromHSLWithConversions(currPixel.h, currPixel.s, min);
-  };
-
-  Canvas.prototype.erodeFilter = function () {
-    timer(this, function () {
-      var i, j, w, h;
-      for (i = 0, w = this.width; i < w; i += 1) {
-        for (j = 0, h = this.height; j < h; j += 1) {
-          this.setPixel(i, j, this.applyErosion(i, j));
-        }
-      }
-    });
-  };
-
-  Canvas.prototype.dilateFilter = function () {
-    timer(this, function () {
-      var i, j, w, h;
-      for (i = 0, w = this.width; i < w; i += 1) {
-        for (j = 0, h = this.height; j < h; j += 1) {
-          this.setPixel(i, j, this.applyDilate(i, j));
-        }
-      }
-    });
-  };
+  Canvas.prototype.applyErosion = genHSLFilter('max');
+  Canvas.prototype.applyDilate = genHSLFilter('min');
+  Canvas.prototype.erodeFilter = genFilter('applyErosion');
+  Canvas.prototype.dilateFilter = genFilter('applyDilate');
 
   Canvas.prototype.regions = function (rw, rh) {
     return timer(this, function () {
