@@ -224,6 +224,60 @@
     });
   };
 
+  Canvas.prototype.applyErosion = function (i, j) {
+    var currPixel = this.getPixel(i, j),
+      max = Math.max(
+      this.getPixel(i - 1, j - 1).l,
+      this.getPixel(i, j - 1).l,
+      this.getPixel(i + 1, j - 1).l,
+      this.getPixel(i - 1, j).l,
+      currPixel.l,
+      this.getPixel(i + 1, j).l,
+      this.getPixel(i - 1, j + 1).l,
+      this.getPixel(i, j + 1).l,
+      this.getPixel(i + 1, j + 1).l
+    );
+    return Color.fromHSLWithConversions(currPixel.h, currPixel.s, max);
+  };
+
+  Canvas.prototype.applyDilate = function (i, j) {
+    var currPixel = this.getPixel(i, j),
+      min = Math.min(
+      this.getPixel(i - 1, j - 1).l,
+      this.getPixel(i, j - 1).l,
+      this.getPixel(i + 1, j - 1).l,
+      this.getPixel(i - 1, j).l,
+      currPixel.l,
+      this.getPixel(i + 1, j).l,
+      this.getPixel(i - 1, j + 1).l,
+      this.getPixel(i, j + 1).l,
+      this.getPixel(i + 1, j + 1).l
+    );
+    return Color.fromHSLWithConversions(currPixel.h, currPixel.s, min);
+  };
+
+  Canvas.prototype.erodeFilter = function () {
+    timer(this, function () {
+      var i, j, w, h;
+      for (i = 0, w = this.width; i < w; i += 1) {
+        for (j = 0, h = this.height; j < h; j += 1) {
+          this.setPixel(i, j, this.applyErosion(i, j));
+        }
+      }
+    });
+  };
+
+  Canvas.prototype.dilateFilter = function () {
+    timer(this, function () {
+      var i, j, w, h;
+      for (i = 0, w = this.width; i < w; i += 1) {
+        for (j = 0, h = this.height; j < h; j += 1) {
+          this.setPixel(i, j, this.applyDilate(i, j));
+        }
+      }
+    });
+  };
+
   Canvas.prototype.regions = function (rw, rh) {
     return timer(this, function () {
       var w = this.width,

@@ -130,6 +130,16 @@ $('#pixelate').click(function () {
   gCanvas.paintRegions(gCanvas.regions(w, h), w, h);
 });
 
+$('#erode').click(function () {
+  gCanvas.dilateFilter();
+  gCanvas.inval();
+});
+
+$('#dilate').click(function () {
+  gCanvas.erodeFilter();
+  gCanvas.inval();
+});
+
 var ks = [
   $('#k0'),
   $('#k1'),

@@ -64,7 +64,7 @@
   };
 
   Color.prototype.toHSL = function () {
-    if (_.isUndefined(this.h) || _.isUndefined(this.s) || _.isUndefined(this.l)) {
+    if (_.isNumber(this.r) && _.isNumber(this.g) && _.isNumber(this.b)) {
       var r = this.r / 255,
         g = this.g / 255,
         b = this.b / 255,
@@ -114,7 +114,7 @@
 
   Color.prototype.toRGB = function () {
     var r, g, b, p, q;
-    if (_.isUndefined(this.r) || _.isUndefined(this.g) || _.isUndefined(this.b)) {
+    if (_.isNumber(this.h) && _.isNumber(this.s) && _.isNumber(this.l)) {
       if (this.s === 0) {
         r = g = b = this.l; // achromatic
       } else {
