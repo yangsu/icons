@@ -127,6 +127,13 @@
     this.normalize = (bool) ? normalize : identity;
   };
 
+  var timer = function (ctx, cb) {
+    var start = Date.now(),
+      rv = cb.call(ctx);
+    $timer.html(Date.now() - start);
+    return rv;
+  };
+
   var genKernelFunction = function (step, finish) {
     finish = finish || function (c) { return c; };
     return function (i, j, kernel) {
@@ -147,50 +154,46 @@
     };
   };
 
-  Canvas.prototype.applyRGBKernel = genKernelFunction(function (o, i, val) {
-    o.r += i.r * val;
-    o.g += i.g * val;
-    o.b += i.b * val;
-  }, function (c, centerPixel) {
-    c.a = centerPixel.a;
-  });
-
-  Canvas.prototype.applyRGBAKernel = genKernelFunction(function (o, i, val) {
-    o.r += i.r * val;
-    o.g += i.g * val;
-    o.b += i.b * val;
-    o.a += i.a * val;
-  });
-
-  Canvas.prototype.applyGrayKernel = genKernelFunction(function (o, i, val) {
-    o.gray = i.gray * val;
-  }, function (c) {
-    c.GrayToRGB();
-  });
-
-  var timer = function (ctx, cb) {
-    var start = Date.now(),
-      rv = cb.call(ctx);
-    $timer.html(Date.now() - start);
-    return rv;
-  };
-
-  var genFilter = function (op) {
+  var genFilter = function (func) {
     return function (kernel) {
       timer(this, function () {
         var i, j, w, h;
         for (i = 0, w = this.width; i < w; i += 1) {
           for (j = 0, h = this.height; j < h; j += 1) {
-            this.setPixel(i, j, this[op](i, j, kernel));
+            this.setPixel(i, j, func.call(this, i, j, kernel));
           }
         }
       });
     };
   };
 
-  Canvas.prototype.rgbFilter = genFilter('applyRGBKernel');
-  Canvas.prototype.rgbaFilter = genFilter('applyRGBAKernel');
-  Canvas.prototype.grayFilter = genFilter('applyGrayKernel');
+  Canvas.prototype.rgbFilter = genFilter(
+    genKernelFunction(function (o, i, val) {
+      o.r += i.r * val;
+      o.g += i.g * val;
+      o.b += i.b * val;
+    }, function (c, centerPixel) {
+      c.a = centerPixel.a;
+    })
+  );
+
+  Canvas.prototype.rgbaFilter = genFilter(
+    genKernelFunction(function (o, i, val) {
+      o.r += i.r * val;
+      o.g += i.g * val;
+      o.b += i.b * val;
+      o.a += i.a * val;
+    })
+  );
+
+  Canvas.prototype.grayFilter = genFilter(
+    genKernelFunction(function (o, i, val) {
+      o.gray = i.gray * val;
+    }, function (c) {
+      c.GrayToRGB();
+    })
+  );
+
   Canvas.prototype.filter = Canvas.prototype.rgbFilter;
 
   var genHSLFilter = function (mathop) {
@@ -201,10 +204,9 @@
       c.HSLtoRGB();
     });
   };
-  Canvas.prototype.applyErosion = genHSLFilter('max');
-  Canvas.prototype.applyDilate = genHSLFilter('min');
-  Canvas.prototype.erodeFilter = genFilter('applyErosion');
-  Canvas.prototype.dilateFilter = genFilter('applyDilate');
+
+  Canvas.prototype.erodeFilter = genFilter(genHSLFilter('max'));
+  Canvas.prototype.dilateFilter = genFilter(genHSLFilter('min'));
 
   Canvas.prototype.regions = function (rw, rh) {
     return timer(this, function () {

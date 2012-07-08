@@ -32,7 +32,7 @@
   };
 
   Color.fromHSL = function (h, s, l) {
-    var c = new Color();
+    var c = new Color(0, 0, 0, 0);
     c.h = h;
     c.s = s;
     c.l = l;
@@ -47,12 +47,12 @@
   };
 
   Color.fromHex = function (hex) {
-    var c = new Color();
-    c.r = parseInt(hex.substring(1, 3), 16);
-    c.g = parseInt(hex.substring(3, 5), 16);
-    c.b = parseInt(hex.substring(5), 16);
-    c.a = 255;
-    return c;
+    return new Color(
+      parseInt(hex.substring(1, 3), 16),
+      parseInt(hex.substring(3, 5), 16),
+      parseInt(hex.substring(5), 16),
+      255
+    );
   };
 
   Color.fromHexWithConversions = function (hex) {
