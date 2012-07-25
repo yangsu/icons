@@ -2,7 +2,7 @@
   // require: color, $, _
 
   var Canvas = function () {
-    this.stackFilters = false;
+    this.stackFilters = true;
   };
 
   Canvas.fromImage = function (image) {
@@ -44,6 +44,10 @@
     this.pixels = new Array(this.width * this.height);
 
     this.computeOriginalPixels();
+  };
+
+  Canvas.prototype.drawImageWithSize = function (image, x, y, w, h) {
+    this.ctx.drawImage(image, x, y, w, h);
   };
 
   var computePixels = function (c, target) {

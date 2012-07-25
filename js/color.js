@@ -66,7 +66,7 @@
     if (_.isUndefined(this.gray)) {
       this.gray = 0.2989 * this.r + 0.5870 * this.g + 0.1140 * this.b;
     }
-    return this.gray;
+    return this;
   };
 
   Color.prototype.RGBtoHSL = function () {
@@ -147,6 +147,22 @@
 
   Color.prototype.RGBtoHEX = function () {
     return "#" + componentToHEX(this.r) + componentToHEX(this.g) + componentToHEX(this.b);
+  };
+
+  Color.prototype.rgbDiff = function (color) {
+    return Math.abs(this.r - color.r) +
+           Math.abs(this.g - color.g) +
+           Math.abs(this.b - color.b);
+  };
+
+  Color.prototype.hslDiff = function (color) {
+    return Math.abs(this.h - color.h) +
+           Math.abs(this.s - color.s) +
+           Math.abs(this.l - color.l);
+  };
+
+  Color.prototype.grayDiff = function (color) {
+    return Math.abs(this.gray - color.gray);
   };
 
   window.Color = Color;

@@ -19,7 +19,6 @@ gCanvas.width = gSize;
 gCanvas.height = gSize;
 gContext = gCanvas.getContext('2d');
 
-
 var processImages = function () {
   var i, j, pixel, pos, sum, $el, c = 0;
   $('img').each(function (ii, image) {
@@ -156,14 +155,13 @@ $(document).ready(function () {
     gTotalCount += data.length;
     var i, filename, result;
     for (i = data.length - 1; i >= 0; i -= 1) {
-      filename = data[i].image.match(/(s\d{2,3}[a-zA-Z0-9-_.]+)/)[0];
+      filename = data[i].image.match(/(s\d{2,3}[a-zA-Z0-9\-_.]+)/)[0];
       data[i].image = 'data/icons/' + filename.replace(/(s\d{2,3})/, 's' + gSize);
       data[i].number = counter++;
       result = $(gIconTemplate(data[i]));
       result.find('img').load(checkLoaded).error(checkLoaded);
-      iconslist.append(gIconTemplate(data[i]));
+      iconslist.append(result);
     }
-    $('img').load(checkLoaded).error(checkLoaded);
   });
   $.getJSON('data/appstore.complete.json', function (data) {
     var c = 0;
@@ -176,7 +174,7 @@ $(document).ready(function () {
       var i, filename, result;
       for (i = category.length - 1; i >= 0; i -= 1) {
         if (category[i].image) {
-          filename = category[i].image.match(/\/([a-zA-Z0-9-_.]+\.jpg)/)[0];
+          filename = category[i].image.match(/\/([a-zA-Z0-9\-_.]+\.jpg)/)[0];
           category[i].image = 'data/appstore' + filename.replace(/(\d{2,3}x\d{2,3})/, '100x100');
           category[i].number = counter++;
           result = $(gIconTemplate(category[i]));
