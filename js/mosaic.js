@@ -12,8 +12,8 @@ var
   gImgTemplate = _.template($('#imgtemplate').html()),
 
   gCanvas = Canvas.fromCanvas($('#canvas')[0]),
-  gImages = [],
-  gInfoMap = {};
+  gImageMap = {},
+  gAvgColor = {};
 
 var gOffscreenCanvas = document.createElement('canvas'),
   gOffscreenContext;
@@ -23,15 +23,18 @@ gOffscreenContext = gOffscreenCanvas.getContext('2d');
 
 var processImages = function () {
   var i, j, pixel, pos, sum, imgdata, c = 0;
-  _.each(gImages, function ($image) {
-    image = $image[0];
+  _.each(gImageMap, function (image) {
     c += 1;
     $state.html('Processing Images ... ' + c + '/' + gTotalCount);
     sum = new Color(0, 0, 0, 255);
-    gOffscreenContext.drawImage(image, 0, 0, gSize, gSize);
     if (!image.width && !image.height) {
       console.log(image);
       return;
+    }
+    try {
+      gOffscreenContext.drawImage(image, 0, 0, gSize, gSize);
+    } catch (e) {
+      debugger;
     }
     imgdata = gOffscreenContext.getImageData(0, 0, image.width, image.height);
     pixel = imgdata.data;
@@ -51,41 +54,44 @@ var processImages = function () {
       sum.a / gSizeSQ
     );
 
-    gInfoMap[$image.attr('number')] = sum;
+    gAvgColor[image.src] = sum;
   });
 };
 
 var generateNextImage = function () {
-  var image = gImages[Math.floor(Math.random() * gImages.length)];
+  var keys = _.keys(gImageMap);
+  var image = gImageMap[keys[Math.floor(Math.random() * keys.length)]];
   $imgContainer.html(image);
-  gCanvas.drawImage(image[0], 0, 0, gSize, gSize);
+  gCanvas.drawImage(image, 0, 0, gSize, gSize);
 };
 
 $('#pixelate').click(function () {
-  var w = 10,
-    h = 10;
+  var start = Date.now();
+  var s = 8,
+    w = s,
+    h = s;
   var regions = gCanvas.regions(w, h),
     imgs = Util.matrix(regions.length, regions[0].length),
     i, j, k, img, l, l2, l3,
     color, color2, closestColor, closestImage,
-    diff,mindiff;
+    diff,mindiff,
+    computeClosest = function (avg, key) {
+      color2 = avg.RGBtoGray();
+      if (!color2) {
+        debugger;
+      }
+      diff = color.rgbDiff(color2);
+      if (diff < mindiff) {
+        mindiff = diff;
+        closestColor = color2;
+        closestImage = gImageMap[key.slice(22)];
+      }
+    };
   for (i = 0, l = regions.length; i < l; i += 1) {
     for (j = 0, l2 = regions[0].length; j < l2; j += 1) {
-      mindiff = 255*255;
+      mindiff = 999999;
       color = regions[i][j].RGBtoHSL().RGBtoGray();
-      for (k = 0, l3 = gImages.length; k < l3; k += 1) {
-        img = gImages[k];
-        color2 = gInfoMap[img.attr('number')].RGBtoGray();
-        if (!color2) {
-          debugger;
-        }
-        diff = color.grayDiff(color2);
-        if (diff < mindiff) {
-          mindiff = diff;
-          closestColor = color2;
-          closestImage = img;
-        }
-      }
+      _.each(gAvgColor, computeClosest);
       if (!closestColor) {
         debugger;
       }
@@ -94,15 +100,16 @@ $('#pixelate').click(function () {
     }
   }
 
-  // var x, y;
-  // for (i = 0, l = regions.length; i < l; i += 1) {
-  //   for (j = 0, l2 = regions[0].length; j < l2; j += 1) {
-  //     x = w * i;
-  //     y = h * j;
-  //     gCanvas.drawImageWithSize(imgs[i][j][0], x, y, w, h);
-  //   }
-  // }
-  gCanvas.paintRegions(regions, w, h);
+  var x, y;
+  for (i = 0, l = regions.length; i < l; i += 1) {
+    for (j = 0, l2 = regions[0].length; j < l2; j += 1) {
+      x = w * i;
+      y = h * j;
+      gCanvas.drawImageWithSize(imgs[i][j], x, y, w, h);
+    }
+  }
+  // gCanvas.paintRegions(regions, w, h);
+  $timer.html(Date.now() - start);
 });
 $('#next').click(function () { generateNextImage(); });
 
@@ -112,8 +119,8 @@ $(document).ready(function () {
     loadedCount = 0,
     checkLoaded = function () {
       loadedCount += 1;
+      $state.html('Loading Images ... ' + loadedCount + '/' + gTotalCount);
       if (loadedCount >= gTotalCount) {
-        console.log('Loaded ' + gTotalCount + ' images');
         processImages();
         generateNextImage();
       }
@@ -126,14 +133,14 @@ $(document).ready(function () {
       data[i].image = 'data/icons/' + filename.replace(/(s\d{2,3})/, 's' + gSize);
       data[i].number = counter++;
       img = $(gImgTemplate(_.extend(data[i], { width: gSize, height: gSize }))).load(checkLoaded).error(checkLoaded);
-      gImages.push(img);
+      gImageMap[data[i].image] = img[0];
     }
   });
   $.getJSON('data/appstore.complete.json', function (data) {
     var c = 0;
     _.each(data, function (category, key) {
       c += 1;
-      if (c > 5) {
+      if (c > 0) {
         return;
       }
       gTotalCount += _.chain(category).pluck('image').compact().value().length;
@@ -144,7 +151,7 @@ $(document).ready(function () {
           category[i].image = 'data/appstore' + filename.replace(/(\d{2,3}x\d{2,3})/, '100x100');
           category[i].number = counter++;
           img = $(gImgTemplate(_.extend(category[i], { width: gSize, height: gSize }))).load(checkLoaded).error(checkLoaded);
-          gImages.push(img);
+          gImageMap[category[i].image] = img[0];
         }
       }
     });
