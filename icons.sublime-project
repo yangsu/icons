@@ -1,14 +1,15 @@
 {
-	"folders":
-	[
-		{
-			"path": "/Users/yang/Code/icons"
-		}
-	],
+  "folders":
+  [
+    {
+      "path": "/Users/yang/Code/icons",
+      "file_exclude_patterns": ["*.sublime-workspace", "*.png", "*.ico"]
+    }
+  ],
     "settings":
     {
         "tab_size": 2,
         "translate_tabs_to_spaces": true,
-        "jslint_options": "--debug --node --indent 4 --nomen --sloppy --predef THREE,_,$,chrome --browser"
+        "jslint_options": "--debug --node --indent 2 --nomen --sloppy --predef THREE,_,$,chrome --browser"
     }
 }
