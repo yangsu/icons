@@ -35,13 +35,15 @@
     return (Math.max(Math.min(x, this.width - 1), 0) + this.width * Math.max(Math.min(y, this.height - 1), 0));
   };
 
-  Canvas.prototype.drawImage = function (image, x, y) {
-    this.ctx.drawImage(image, x, y);
-    this.imageData = this.ctx.getImageData(0, 0, this.width, this.height);
-    this.imageDataBuffer = this.ctx.getImageData(0, 0, this.width, this.height);
+  Canvas.prototype.drawImage = function (image, x, y, width, height) {
+    var w = width || this.width,
+      h = height || this.height;
+    this.ctx.drawImage(image, x, y, w, h);
+    this.imageData = this.ctx.getImageData(0, 0, w, h);
+    this.imageDataBuffer = this.ctx.getImageData(0, 0, w, h);
     this.subPixels = this.imageData.data;
     this.subPixelsBuffer = this.imageDataBuffer.data;
-    this.pixels = new Array(this.width * this.height);
+    this.pixels = new Array(w * h);
 
     this.computeOriginalPixels();
   };

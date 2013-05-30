@@ -4,7 +4,7 @@
 var
 //Constants
   gTotalCount = 0,
-  gSize = 256,
+  gSize = 100,
   gSizeSQ = gSize * gSize,
   $imgContainer = $('#imgContainer'),
   $state = $('#state'),
@@ -67,7 +67,7 @@ var generateNextImage = function () {
 
 $('#pixelate').click(function () {
   var start = Date.now();
-  var s = 8,
+  var s = 5,
     w = s,
     h = s;
   var regions = gCanvas.regions(w, h),
@@ -111,8 +111,9 @@ $('#pixelate').click(function () {
   // gCanvas.paintRegions(regions, w, h);
   $timer.html(Date.now() - start);
 });
-$('#next').click(function () { generateNextImage(); });
 
+$('#next').click(function () { generateNextImage(); });
+$('#reset').click(function () { gCanvas.reset(); });
 
 $(document).ready(function () {
   var counter = 0,
@@ -130,7 +131,7 @@ $(document).ready(function () {
     var i, filename, result, img;
     for (i = data.length - 1; i >= 0; i -= 1) {
       filename = data[i].image.match(/(s\d{2,3}[a-zA-Z0-9\-_.]+)/)[0];
-      data[i].image = 'data/icons/' + filename.replace(/(s\d{2,3})/, 's' + gSize);
+      data[i].image = 'data/icons/' + filename.replace(/(s\d{2,3})/, 's' + 256 || gSize);
       data[i].number = counter++;
       img = $(gImgTemplate(_.extend(data[i], { width: gSize, height: gSize }))).load(checkLoaded).error(checkLoaded);
       gImageMap[data[i].image] = img[0];
@@ -140,7 +141,7 @@ $(document).ready(function () {
     var c = 0;
     _.each(data, function (category, key) {
       c += 1;
-      if (c > 0) {
+      if (c > 5) {
         return;
       }
       gTotalCount += _.chain(category).pluck('image').compact().value().length;
