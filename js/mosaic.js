@@ -21,9 +21,9 @@ gOffscreenCanvas.width = gSize;
 gOffscreenCanvas.height = gSize;
 gOffscreenContext = gOffscreenCanvas.getContext('2d');
 
-var processImages = function () {
+var processImages = function() {
   var i, j, pixel, pos, sum, imgdata, c = 0;
-  _.each(gImageMap, function (image) {
+  _.each(gImageMap, function(image) {
     c += 1;
     $state.html('Processing Images ... ' + c + '/' + gTotalCount);
     sum = new Color(0, 0, 0, 255);
@@ -58,14 +58,14 @@ var processImages = function () {
   });
 };
 
-var generateNextImage = function () {
+var generateNextImage = function() {
   var keys = _.keys(gImageMap);
   var image = gImageMap[keys[Math.floor(Math.random() * keys.length)]];
   $imgContainer.html(image);
   gCanvas.drawImage(image, 0, 0, gSize, gSize);
 };
 
-$('#pixelate').click(function () {
+$('#pixelate').click(function() {
   var start = Date.now();
   var s = 5,
     w = s,
@@ -75,7 +75,7 @@ $('#pixelate').click(function () {
     i, j, k, img, l, l2, l3,
     color, color2, closestColor, closestImage,
     diff,mindiff,
-    computeClosest = function (avg, key) {
+    computeClosest = function(avg, key) {
       color2 = avg.RGBtoGray();
       if (!color2) {
         debugger;
@@ -112,13 +112,13 @@ $('#pixelate').click(function () {
   $timer.html(Date.now() - start);
 });
 
-$('#next').click(function () { generateNextImage(); });
-$('#reset').click(function () { gCanvas.reset(); });
+$('#next').click(function() { generateNextImage(); });
+$('#reset').click(function() { gCanvas.reset(); });
 
-$(document).ready(function () {
+$(document).ready(function() {
   var counter = 0,
     loadedCount = 0,
-    checkLoaded = function () {
+    checkLoaded = function() {
       loadedCount += 1;
       $state.html('Loading Images ... ' + loadedCount + '/' + gTotalCount);
       if (loadedCount >= gTotalCount) {
@@ -126,7 +126,7 @@ $(document).ready(function () {
         generateNextImage();
       }
     };
-  $.getJSON('data/icons.json', function (data) {
+  $.getJSON('data/icons.json', function(data) {
     gTotalCount += data.length;
     var i, filename, result, img;
     for (i = data.length - 1; i >= 0; i -= 1) {
@@ -137,9 +137,9 @@ $(document).ready(function () {
       gImageMap[data[i].image] = img[0];
     }
   });
-  $.getJSON('data/appstore.complete.json', function (data) {
+  $.getJSON('data/appstore.complete.json', function(data) {
     var c = 0;
-    _.each(data, function (category, key) {
+    _.each(data, function(category, key) {
       c += 1;
       if (c > 5) {
         return;

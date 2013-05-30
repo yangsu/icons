@@ -1,5 +1,5 @@
 var Util = {
-  matrix : function (r, c) {
+  matrix : function(r, c) {
     var rv = [],
       i;
     for (i = 0; i < r; i += 1) {

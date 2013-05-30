@@ -11,14 +11,14 @@ var
   gCanvas = Canvas.fromCanvas($('#canvas')[0]),
   gImages;
 
-var processImage = function () {
+var processImage = function() {
   var i, j, pixels, pos, color,
     colorMap = {},
     sum = new Color(0, 0, 0, 255),
     img = $('#image')[0];
   gCanvas.drawImage(img, 0, 0);
 
-  gCanvas.eachPixel(function (x, y, pixelPos) {
+  gCanvas.eachPixel(function(x, y, pixelPos) {
     color = gCanvas.pixels[pixelPos];
     sum.r = sum.r + color.r;
     sum.g = sum.g + color.g;
@@ -40,33 +40,33 @@ var processImage = function () {
 };
 
 var compareFuncs = {
-  id : function (a, b) {
+  id : function(a, b) {
     var aa = a.pos,
       bb = b.pos;
     return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
   },
-  hue : function (a, b) {
+  hue : function(a, b) {
     var aa = a.h,
       bb = b.h;
     return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
   },
-  gray : function (a, b) {
+  gray : function(a, b) {
     var aa = a.gray,
       bb = b.gray;
     return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
   }
 };
 
-var sortFunc = function (type) {
+var sortFunc = function(type) {
   var togleState = false, x, y, pos;
-  return function (evt) {
+  return function(evt) {
     var pixels = gCanvas.getPixels();
     pixels.sort(compareFuncs[type]);
     if (togleState) {
       pixels.reverse();
     }
 
-    gCanvas.eachPixel(function (x, y, pixelPos) {
+    gCanvas.eachPixel(function(x, y, pixelPos) {
       gCanvas.setPixel(x, y, pixels[pixelPos]);
     });
 
@@ -77,7 +77,7 @@ var sortFunc = function (type) {
   };
 };
 
-var generateNextImage = function () {
+var generateNextImage = function() {
   var image = gImages[Math.floor(Math.random() * gImages.length)];
   $('#image').remove();
   $imgContainer.append(gImgTemplate(image));
@@ -87,9 +87,9 @@ var generateNextImage = function () {
 $('#sort').click(sortFunc('id'));
 $('#huesort').click(sortFunc('hue'));
 $('#graysort').click(sortFunc('gray'));
-$('#next').click(function () { generateNextImage(); });
-$('#reset').click(function () { gCanvas.reset(); });
-$('#blur').click(function () {
+$('#next').click(function() { generateNextImage(); });
+$('#reset').click(function() { gCanvas.reset(); });
+$('#blur').click(function() {
   gCanvas.filter([
     [1 / 9, 1 / 9, 1 / 9],
     [1 / 9, 1 / 9, 1 / 9],
@@ -98,7 +98,7 @@ $('#blur').click(function () {
   gCanvas.inval();
 });
 
-$('#sharpen').click(function () {
+$('#sharpen').click(function() {
   gCanvas.filter([
     [-1 / 9, -1 / 9, -1 / 9],
     [-1 / 9, 17 / 9, -1 / 9],
@@ -107,7 +107,7 @@ $('#sharpen').click(function () {
   gCanvas.inval();
 });
 
-$('#edge').click(function () {
+$('#edge').click(function() {
   gCanvas.filter([
     [-1, -1, -1],
     [-1, 8, -1],
@@ -116,7 +116,7 @@ $('#edge').click(function () {
   gCanvas.inval();
 });
 
-$('#emboss').click(function () {
+$('#emboss').click(function() {
   gCanvas.filter([
     [-2, -1, -0],
     [-1, 1, 1],
@@ -125,18 +125,18 @@ $('#emboss').click(function () {
   gCanvas.inval();
 });
 
-$('#pixelate').click(function () {
+$('#pixelate').click(function() {
   var w = 5,
     h = 5;
   gCanvas.paintRegions(gCanvas.regions(w, h), w, h);
 });
 
-$('#erode').click(function () {
+$('#erode').click(function() {
   gCanvas.dilateFilter();
   gCanvas.inval();
 });
 
-$('#dilate').click(function () {
+$('#dilate').click(function() {
   gCanvas.erodeFilter();
   gCanvas.inval();
 });
@@ -160,7 +160,7 @@ var kernel = [
 ];
 
 $timer = $('#timer');
-$('#kernel').delegate('.kernel-cell', 'keyup', function (e) {
+$('#kernel').delegate('.kernel-cell', 'keyup', function(e) {
   var i = +e.target.id.slice(1),
     r = Math.floor(i / 3),
     c = i%3,
@@ -186,10 +186,10 @@ $('#kernel').delegate('.kernel-cell', 'keyup', function (e) {
   }
 });
 
-$(document).ready(function () {
-  $.getJSON('data/icons.json', function (data) {
+$(document).ready(function() {
+  $.getJSON('data/icons.json', function(data) {
     var filename;
-    gImages = _.map(data, function (value, key) {
+    gImages = _.map(data, function(value, key) {
       filename = value.image.match(/(s\d{2,3}[a-zA-Z0-9-_.]+)/)[0];
       return {
         image: 'data/icons/' + filename.replace(/(s\d{2,3})/, 's' + gSize)

@@ -1,37 +1,37 @@
-(function (window) {
-  var Color = function (r, g, b, a) {
+(function(window) {
+  var Color = function(r, g, b, a) {
     this.r = r;
     this.g = g;
     this.b = b;
     this.a = a;
   };
 
-  Color.empty = function () {
+  Color.empty = function() {
     var c = new Color(0, 0, 0, 0);
     c.h = c.s = c.l = 0;
     return c;
   };
 
-  Color.fromGray = function (gray) {
+  Color.fromGray = function(gray) {
     var c = new Color(gray, gray, gray, 255);
     c.gray = gray;
     return c;
   };
 
-  Color.fromGrayWithConversions = function (gray) {
+  Color.fromGrayWithConversions = function(gray) {
     var c = Color.fromGray(gray);
     c.RGBtoHSL();
     return c;
   };
 
-  Color.fromRGBAWithConversions = function (r, g, b, a) {
+  Color.fromRGBAWithConversions = function(r, g, b, a) {
     var c = new Color(r, g, b, a);
     c.RGBtoHSL();
     c.RGBtoGray();
     return c;
   };
 
-  Color.fromHSL = function (h, s, l) {
+  Color.fromHSL = function(h, s, l) {
     var c = new Color(0, 0, 0, 0);
     c.h = h;
     c.s = s;
@@ -39,14 +39,14 @@
     return c;
   };
 
-  Color.fromHSLWithConversions = function (h, s, l) {
+  Color.fromHSLWithConversions = function(h, s, l) {
     var c = Color.fromHSL(h, s, l);
     c.RGBtoGray();
     c.HSLtoRGB();
     return c;
   };
 
-  Color.fromHex = function (hex) {
+  Color.fromHex = function(hex) {
     return new Color(
       parseInt(hex.substring(1, 3), 16),
       parseInt(hex.substring(3, 5), 16),
@@ -55,21 +55,21 @@
     );
   };
 
-  Color.fromHexWithConversions = function (hex) {
+  Color.fromHexWithConversions = function(hex) {
     var c = Color.fromHexWithConversions(hex);
     c.RGBtoGray();
     c.RGBtoHSL();
     return c;
   };
 
-  Color.prototype.RGBtoGray = function () {
+  Color.prototype.RGBtoGray = function() {
     if (_.isUndefined(this.gray)) {
       this.gray = 0.2989 * this.r + 0.5870 * this.g + 0.1140 * this.b;
     }
     return this;
   };
 
-  Color.prototype.RGBtoHSL = function () {
+  Color.prototype.RGBtoHSL = function() {
     var r = this.r / 255,
       g = this.g / 255,
       b = this.b / 255,
@@ -98,7 +98,7 @@
     return this;
   };
 
-  var hue2rgb = function (p, q, t) {
+  var hue2rgb = function(p, q, t) {
     if (t < 0) {
       t += 1;
     }
@@ -117,13 +117,13 @@
     return p;
   };
 
-  Color.prototype.GraytoRGB = function () {
+  Color.prototype.GraytoRGB = function() {
     this.r = this.gray;
     this.g = this.gray;
     this.b = this.gray;
   };
 
-  Color.prototype.HSLtoRGB = function () {
+  Color.prototype.HSLtoRGB = function() {
     var r, g, b, p, q;
     if (this.s === 0) {
       r = g = b = this.l; // achromatic
@@ -140,28 +140,28 @@
     return this;
   };
 
-  var componentToHEX = function (c) {
+  var componentToHEX = function(c) {
     var hex = Math.round(c).toString(16);
     return hex.length === 1 ? '0' + hex : hex;
   };
 
-  Color.prototype.RGBtoHEX = function () {
+  Color.prototype.RGBtoHEX = function() {
     return "#" + componentToHEX(this.r) + componentToHEX(this.g) + componentToHEX(this.b);
   };
 
-  Color.prototype.rgbDiff = function (color) {
+  Color.prototype.rgbDiff = function(color) {
     return Math.abs(this.r - color.r) +
            Math.abs(this.g - color.g) +
            Math.abs(this.b - color.b);
   };
 
-  Color.prototype.hslDiff = function (color) {
+  Color.prototype.hslDiff = function(color) {
     return Math.abs(this.h - color.h) +
            Math.abs(this.s - color.s) +
            Math.abs(this.l - color.l);
   };
 
-  Color.prototype.grayDiff = function (color) {
+  Color.prototype.grayDiff = function(color) {
     return Math.abs(this.gray - color.gray);
   };
 

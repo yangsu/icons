@@ -19,9 +19,9 @@ gCanvas.width = gSize;
 gCanvas.height = gSize;
 gContext = gCanvas.getContext('2d');
 
-var processImages = function () {
+var processImages = function() {
   var i, j, pixel, pos, sum, $el, c = 0;
-  $('img').each(function (ii, image) {
+  $('img').each(function(ii, image) {
     c += 1;
 
     $state.html('Processing Images ... ' + c + '/' + gTotalCount);
@@ -59,54 +59,54 @@ var processImages = function () {
 };
 
 var compareFuncs = {
-  id : function (a, b) {
+  id : function(a, b) {
     var aa = +a.attributes.number.value,
       bb = +b.attributes.number.value;
     return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
   },
-  hue : function (a, b) {
+  hue : function(a, b) {
     var an = +a.attributes.number.value,
       bn = +b.attributes.number.value,
       aa = gInfoMap[an].h,
       bb = gInfoMap[bn].h;
     return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
   },
-  saturation : function (a, b) {
+  saturation : function(a, b) {
     var an = +a.attributes.number.value,
       bn = +b.attributes.number.value,
       aa = gInfoMap[an].s,
       bb = gInfoMap[bn].s;
     return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
   },
-  lightness : function (a, b) {
+  lightness : function(a, b) {
     var an = +a.attributes.number.value,
       bn = +b.attributes.number.value,
       aa = gInfoMap[an].l,
       bb = gInfoMap[bn].l;
     return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
   },
-  gray : function (a, b) {
+  gray : function(a, b) {
     var an = +a.attributes.number.value,
       bn = +b.attributes.number.value,
       aa = gInfoMap[an].gray,
       bb = gInfoMap[bn].gray;
     return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
   },
-  red : function (a, b) {
+  red : function(a, b) {
     var an = +a.attributes.number.value,
       bn = +b.attributes.number.value,
       aa = gInfoMap[an].r,
       bb = gInfoMap[bn].r;
     return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
   },
-  green : function (a, b) {
+  green : function(a, b) {
     var an = +a.attributes.number.value,
       bn = +b.attributes.number.value,
       aa = gInfoMap[an].g,
       bb = gInfoMap[bn].g;
     return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
   },
-  blue : function (a, b) {
+  blue : function(a, b) {
     var an = +a.attributes.number.value,
       bn = +b.attributes.number.value,
       aa = gInfoMap[an].b,
@@ -115,16 +115,16 @@ var compareFuncs = {
   }
 };
 
-var sortFunc = function (type) {
+var sortFunc = function(type) {
   var togleState = false;
-  return function (evt) {
+  return function(evt) {
     var list = $('#list'),
       listitems = list.children('li').get();
     listitems.sort(compareFuncs[type]);
     if (togleState) {
       listitems.reverse();
     }
-    $.each(listitems, function (idx, itm) { list.append(itm); });
+    $.each(listitems, function(idx, itm) { list.append(itm); });
     evt.target.innerHTML = (togleState) ? 'Sort' : 'RSort';
     togleState = !togleState;
   };
@@ -139,11 +139,11 @@ $('#satsort').click(sortFunc('saturation'));
 $('#lightsort').click(sortFunc('lightness'));
 $('#graysort').click(sortFunc('gray'));
 
-$(document).ready(function () {
+$(document).ready(function() {
   var iconslist = $('<ul id="list"></ul>'),
     counter = 0,
     loadedCount = 0,
-    checkLoaded = function () {
+    checkLoaded = function() {
       loadedCount += 1;
       $state.html('Loading Images ... ' + loadedCount + '/' + gTotalCount);
       if (loadedCount >= gTotalCount) {
@@ -151,7 +151,7 @@ $(document).ready(function () {
         processImages();
       }
     };
-  $.getJSON('data/icons.json', function (data) {
+  $.getJSON('data/icons.json', function(data) {
     gTotalCount += data.length;
     var i, filename, result;
     for (i = data.length - 1; i >= 0; i -= 1) {
@@ -163,9 +163,9 @@ $(document).ready(function () {
       iconslist.append(result);
     }
   });
-  $.getJSON('data/appstore.complete.json', function (data) {
+  $.getJSON('data/appstore.complete.json', function(data) {
     var c = 0;
-    _.each(data, function (category, key) {
+    _.each(data, function(category, key) {
       c += 1;
       if (c > 2) {
         return;
